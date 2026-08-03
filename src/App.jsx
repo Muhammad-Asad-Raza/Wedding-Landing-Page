@@ -8,20 +8,24 @@ import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 // ══════════════════════════════════════════════════════════════════════════
 const W = {
   bride:'Aqsa Kanwal', groom:'Huzaifa Khan',
-  date: new Date('2026-12-15T18:00:00'),
+  date: new Date('2026-12-17T18:00:00'),
+  valima: new Date('2026-12-21T19:30:00'),
   hashtag:'#AqsaHuzaifaForever',
   events:[
-    { id:1,icon:'🌸',accent:'#FF9EBC',name:'Mehndi Night',    day:'Saturday', date:'December 12, 2026',time:'07:00 PM — Late Night',venue:'The Pearl Garden, Gulshan-e-Iqbal',city:'Karachi',dress:'Traditional Colorful',desc:'An enchanting evening of mehndi, music and joy.' },
-    { id:2,icon:'💒',accent:'#D4AF37',name:'Barat Ceremony',   day:'Tuesday',  date:'December 15, 2026',time:'06:00 PM — Midnight',   venue:'Grand Royale Banquet Hall, DHA',   city:'Karachi',dress:'Formal / Sherwani',  desc:'The most cherished night — where two souls become one family.' },
-    { id:3,icon:'✨',accent:'#C084FC',name:'Valima Reception', day:'Thursday', date:'December 17, 2026',time:'07:30 PM — Late Night',venue:'Serena Hotel Ballroom, Clifton',  city:'Karachi',dress:'Formal / Elegant',    desc:'A grand reception celebrating the blessed union.' },
+    { id:1,icon:'🌼',accent:'#FF9EBC',name:'Mayoon + Nikah', day:'Monday',   date:'December 14, 2026',time:'Nikah 04:00 PM — 05:30 PM · Mayoon 08:00 PM — Late Night',venue:'Nikah at Jama Masjid Siddiqui · Mayoon at Home ',city:'Karachi',dress:'Traditional / Elegant',desc:'Mayoon at home and nikah at Jama Masjid Siddiqui — one beautiful day, one special story.' },
+    { id:2,icon:'💒',accent:'#C084FC',name:'Wedding Celebration',day:'Thursday',date:'December 17, 2026',time:'07:00 PM — Late Night',venue:'Zam Zam Marquee',city:'Karachi',dress:'Formal / Sherwani',  desc:'A beautiful wedding celebration at Zam Zam Marquee with family and friends.' },
+    { id:3,icon:'✨',accent:'#E8B842',name:'Valima Reception',day:'Monday',   date:'December 21, 2026',time:'07:30 PM — Late Night',venue:'Zam Zam Marquee',city:'Karachi',dress:'Formal / Elegant',     desc:'A grand valima reception at Zam Zam Marquee welcoming all guests.' },
+  ],
+  locations:[
+    { id:1,title:'Zam Zam Marquee',subtitle:'Wedding & Nikah Venue',address:'Plot No. 10, Serve No. 185/186, Opp. Airport Police Station, Shahrah-e-Faisal, Karachi',map:'https://www.google.com/maps/search/?api=1&query=Plot+No.+10%2C+Serve+No.+185%2F186%2C+Opp.+Airport+Police+Station%2C+Shahrah-e-Faisal%2C+Karachi' },
+    { id:2,title:'Maureen Banquet',subtitle:'Valima Reception Venue',address:'C-18/20 F.B. Area, Near Ancholi, Adjacent Suzuki Showroom Shahra-e-Pakistan, Karachi',map:'https://www.google.com/maps/search/?api=1&query=C-18%2F20+F.B.+Area%2C+Near+Ancholi%2C+Adjacent+Suzuki+Showroom+Shahra-e-Pakistan%2C+Karachi' },
   ],
   timeline:[
-    { year:'2021',icon:'⭐',title:'Destined Paths',  desc:'Two families from the same neighbourhood — a connection written in the stars long before either knew.' },
-    { year:'2022',icon:'🌷',title:'First Meeting',   desc:'A family gathering brought them face to face for the very first time. A single glance was all it took.' },
-    { year:'2023',icon:'💌',title:'Getting to Know', desc:'Shared conversations, family dinners, and the slow beautiful realisation that this was something rare.' },
-    { year:'2024',icon:'💍',title:'The Promise',     desc:'Huzaifa asked. Aqsa smiled. Two families united with joy, prayers, and tears of happiness.' },
-    { year:'2025',icon:'📅',title:'Planning Forever',desc:'A year of dreams, decisions, and counting down to the most beautiful chapter yet to begin.' },
-    { year:'2026',icon:'🕊️',title:'Forever Begins', desc:'December 15th, 2026 — the day two hearts officially become one eternal story.' },
+    { year:'5 Jun 2026', icon:'⭐', title:'They Met',    desc:'They met on June 5, 2026 — a moment that started everything.' },
+    { year:'8 Jun 2026', icon:'🌷', title:'Families Meet', desc:'On June 8 both families visited his home to meet and share introductions.' },
+    { year:'14 Jun 2026', icon:'💌', title:'Commitment',  desc:'On June 14 their relationship was made official — the promise was sealed.' },
+    { year:'Mid‑Jun 2026', icon:'💬', title:'Conversations', desc:'After that, visits and conversations continued as plans and feelings grew.' },
+    { year:'17 Dec 2026', icon:'🕊️', title:'Forever Begins',desc:'December 17th, 2026 — the day two hearts officially become one.' },
   ],
   gallery:[
     { id:1,span:2,label:'First Look',  sub:'The moment we\'ve always dreamed of',g:'linear-gradient(135deg,#FF9EBC,#FFCCE0)' },
@@ -31,14 +35,52 @@ const W = {
     { id:5,span:1,label:'Joy',         sub:'Smiles that light up the room',       g:'linear-gradient(135deg,#D4AF37,#FF9EBC)' },
     { id:6,span:2,label:'Our Moment',  sub:'A love story worth celebrating',      g:'linear-gradient(135deg,#6366F1,#C084FC,#FF9EBC)' },
   ],
-  blessings:[
-    { a:'A',name:'Ammi & Abu',   rel:'Parents of the Bride',  msg:'Our Aqsa, you are our greatest blessing. May Allah fill your new home with endless love, laughter, and barakah. We are so proud of you. 💕' },
-    { a:'N',name:'Nana Jaan',    rel:'Maternal Grandfather',  msg:'Beta, seeing you both today, my heart overflows with gratitude. May Allah keep you united in this dunya and akhirah. Meri dua hamesha tumhare sath hai.' },
-    { a:'H',name:'Hamza Bhai',   rel:'Brother of the Bride',  msg:'My little sis getting married feels unreal. Huzaifa bhai, you better take care of her! 😄 Wishing you both a life full of adventures!' },
-    { a:'S',name:'Sana Apa',     rel:'Cousin Sister',         msg:'Aqsa, from childhood sleepovers to this magical day — what a journey! You deserve every bit of happiness. We love you endlessly! 🌸' },
-    { a:'D',name:'Dadi Amma',    rel:'Paternal Grandmother',  msg:'Mere bachon, Allah tumhare ghar ko jannat ka ek tukra bana de. Yeh budhi aankhein aaj bahut khush hain. Tumhein mera pyar mubarak ho.' },
-    { a:'F',name:'Faisal Uncle', rel:'Uncle of the Groom',    msg:'Huzaifa, you have chosen wisely. Aqsa is a gem, and together you will build something beautiful. Congratulations! 🎊' },
-  ],
+  // blessings:[
+  //   { a:'A',name:'Ammi & Abu',   rel:'Parents of the Bride',  msg:'Our Aqsa, you are our greatest blessing. May Allah fill your new home with endless love, laughter, and barakah. We are so proud of you. 💕' },
+  //   { a:'N',name:'Khala',    rel:'Maternal Khala',  msg:'Beta, seeing you both today, my heart overflows with gratitude. May Allah keep you united in this dunya and akhirah. Meri dua hamesha tumhare sath hai.' },
+  //   { a:'H',name:'Bhaii',   rel:'Brother of the Bride',  msg:'My little sis😄 getting married feels unreal. Huzaifa bhai, you better take care of her! 😄 Wishing you both a life full of adventures!' },
+  //   { a:'S',name:'Sis',     rel:'Sisters of the Bride',         msg:'Aqsa Apii, from my big sisters sleepovers to this magical day — what a journey! You deserve every bit of happiness. We love you endlessly! 🌸' },
+  //   { a:'D',name:'Phoppo',    rel:'Paternal Phoppo',  msg:'Mere bachon, Allah tumhare ghar ko jannat ka ek tukra bana de. Yeh budhi aankhein aaj bahut khush hain. Tumhein mera pyar mubarak ho.' },
+  //   { a:'F',name:'Cousins', rel:'Cousin of the Groom',    msg:'Huzaifa, you have chosen wisely. Aqsa is a gem, and together you will build something beautiful. Congratulations! 🎊' },
+  // ],
+  blessings: [
+  { 
+    a: 'A', 
+    name: 'Ammi & Abu', 
+    rel: 'Parents of the Bride', 
+    msg: 'Our Aqsa, you are our greatest blessing. May Allah fill your new home with endless love, laughter, and barakah. We are so proud of you. 💕' 
+  },
+  { 
+    a: 'K', 
+    name: 'Khala', 
+    rel: 'Maternal Aunt', 
+    msg: 'Beta, seeing you both today, my heart overflows with gratitude. May Allah keep you united in this dunya and akhirah. Meri dua hamesha tumhare sath hai.' 
+  },
+  { 
+    a: 'B', 
+    name: 'Bhai', 
+    rel: 'Brother of the Bride', 
+    msg: 'My little sis 😄, seeing you get married feels unreal! Huzaifa bhai, you better take care of her! 😄 Wishing you both a life full of adventures!' 
+  },
+  { 
+    a: 'S', 
+    name: 'Sisters', 
+    rel: 'Sisters of the Bride', 
+    msg: 'Aqsa Api, from late-night sleepovers to this magical day — what a journey! You deserve every bit of happiness. We love you endlessly! 🌸' 
+  },
+  { 
+    a: 'P', 
+    name: 'Phuppo', 
+    rel: 'Paternal Aunt', 
+    msg: 'Mere bachon, Allah tumhare ghar ko jannat ka ek tukra bana de. Yeh aankhein aaj bahut khush hain. Tumhein mera pyara sa ashirwad aur pyar mubarak ho.' 
+  },
+  { 
+    a: 'C', 
+    name: 'Cousins', 
+    rel: 'Cousins of the Groom', 
+    msg: 'Huzaifa, you have chosen wisely! Aqsa is a gem, and together you will build something beautiful. Congratulations! 🎊' 
+  },
+],
   rsvp:{ submit:(d)=>{ console.log('💌 RSVP:',d); return Promise.resolve({ok:true}); } },
 };
 
@@ -96,9 +138,29 @@ body{
 /* ── Shimmer ── */
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 
+@keyframes pulseBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes shineGlow{0%{opacity:.25;transform:translateX(-110%)}50%{opacity:.6}100%{opacity:.25;transform:translateX(110%)}}
+
 /* ── Float ── */
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
+.reveal-card{position:relative;overflow:hidden;border-radius:38px;background:rgba(255,255,255,.07);border:1px solid rgba(212,175,55,.25);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+.reveal-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(255,255,255,.16),transparent 28%),radial-gradient(circle at bottom right,rgba(212,175,55,.12),transparent 25%);pointer-events:none;}
+.reveal-card .shine-bar{position:absolute;top:0;left:-120%;width:160%;height:24%;background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.35),rgba(255,255,255,0));transform:skewX(-18deg);animation:shineGlow 2.2s ease-in-out infinite;pointer-events:none;}
+.reveal-card .heart-mark{position:absolute;top:12px;right:12px;width:60px;height:58px;background:radial-gradient(circle at 35% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7)),radial-gradient(circle at 65% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7));border-radius:50% 50% 50% 50%;transform:rotate(45deg);box-shadow:0 0 18px rgba(212,175,55,.18);}
+.reveal-card .heart-mark:after{content:'';position:absolute;top:12px;left:12px;width:20px;height:20px;background:rgba(255,255,255,.85);border-radius:50%;}
+.scratch-wrapper{position:relative;overflow:hidden;border-radius:26px;margin:-1.2rem auto 1rem;width:calc(100% - 2.4rem);height:220px;touch-action:none;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.scratch-wrapper.revealed .scratch-canvas{opacity:0;pointer-events:none;}
+.scratch-wrapper.revealed .scratch-prompt{opacity:0;visibility:hidden;}
+.scratch-wrapper.revealed .scratch-heart{transform:translate(-50%,-50%) rotate(45deg) scale(0.92);opacity:0.28;transition:transform .7s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
+.scratch-wrapper.revealed .scratch-content{opacity:1;transform:none;}
+.scratch-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none;z-index:4}
+.scratch-prompt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:1rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.95);z-index:5;pointer-events:none;}
+.scratch-heart{position:absolute;top:50%;left:50%;width:140px;height:130px;transform:translate(-50%,-50%) rotate(45deg);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.18),transparent 45%),radial-gradient(circle at 70% 30%,rgba(255,255,255,.18),transparent 45%);border-radius:50% 50% 0 0;box-shadow:0 0 0 1px rgba(255,255,255,.06), inset 0 0 40px rgba(255,255,255,.03);pointer-events:none;transition:transform .9s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
+.scratch-content{position:relative;z-index:2;padding:28px 22px 12px;opacity:0;transform:translateY(8px) scale(.995);transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+
+@keyframes popHeart{0%{transform:translate(-50%,-50%) rotate(45deg) scale(.6);opacity:0}45%{transform:translate(-50%,-50%) rotate(45deg) scale(1.06);opacity:1}70%{transform:translate(-50%,-50%) rotate(45deg) scale(.98)}100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}}
+.scratch-wrapper.revealed .scratch-heart{animation:popHeart .9s cubic-bezier(.2,.9,.28,1) forwards}
 /* ── Tap pulse ── */
 @keyframes tapPulse{0%{transform:scale(1)}50%{transform:scale(.96)}100%{transform:scale(1)}}
 
@@ -379,7 +441,18 @@ function SparkleCanvas(){
       raf=requestAnimationFrame(loop);
     };
     loop();
-
+    // Listen for programmatic sparkle bursts (dispatched from other components)
+    const onBurst = (ev)=>{
+      try{
+        const d = ev.detail || {};
+        const x = typeof d.x === 'number' ? d.x : canvas.width/2;
+        const y = typeof d.y === 'number' ? d.y : canvas.height/2;
+        const count = typeof d.count === 'number' ? d.count : 20;
+        const upward = typeof d.upward === 'boolean' ? d.upward : true;
+        emit(x,y,count,upward);
+      }catch(e){/* ignore */}
+    };
+    window.addEventListener('sparkle-burst', onBurst);
     return()=>{
       window.removeEventListener('resize',resize);
       window.removeEventListener('mousemove',onMove);
@@ -387,6 +460,7 @@ function SparkleCanvas(){
       window.removeEventListener('touchmove',onTouchMove);
       window.removeEventListener('scroll',onScroll);
       if(ambientId) clearInterval(ambientId);
+      window.removeEventListener('sparkle-burst', onBurst);
       cancelAnimationFrame(raf);
     };
   },[]);
@@ -445,6 +519,7 @@ const NAVS=[
   {id:'hero',    label:'Home',     mIcon:'🏠'},
   {id:'story',   label:'Story',    mIcon:'💌'},
   {id:'events',  label:'Events',   mIcon:'📅'},
+  {id:'location',label:'Venue',    mIcon:'📍'},
   {id:'gallery', label:'Gallery',  mIcon:'🖼'},
   {id:'rsvp',    label:'RSVP',     mIcon:'✉️'},
   {id:'blessings',label:'Blessings',mIcon:'💬'},
@@ -590,7 +665,7 @@ function Envelope({onOpen}){
       </motion.div>
       {/* Wax Seal */}
       <div className={clicked?'seal-fade':''} onClick={open}
-        style={{position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)',zIndex:9002,textAlign:'center',cursor:clicked?'default':'pointer',userSelect:'none'}}>
+        style={{position:'fixed',top:isMobile()? '50vh' : '58vh',left:'50%',transform:'translate(-50%,-50%)',zIndex:9002,textAlign:'center',cursor:clicked?'default':'pointer',userSelect:'none'}}>
         <div style={{position:'relative',display:'inline-block'}}>
           <BurstParticles active={burst}/>
           <div style={{position:'absolute',inset:-13,borderRadius:'50%',border:'1px dashed rgba(212,175,55,.3)',animation:clicked?'none':'floatY 4s ease-in-out infinite'}}/>
@@ -604,8 +679,8 @@ function Envelope({onOpen}){
             <p style={{fontFamily:'Jost',fontSize:'.44rem',letterSpacing:'4px',color:'rgba(251,244,228,.6)',marginTop:4,position:'relative',zIndex:1}}>DECEMBER 2026</p>
           </div>
         </div>
-        {!clicked&&<div style={{marginTop:'1.4rem',animation:'floatY 3s ease-in-out infinite'}}>
-          <p style={{fontFamily:'Jost',fontSize:'.65rem',letterSpacing:'5px',textTransform:'uppercase',color:'rgba(120,82,12,.72)'}}>✦ Click to Open ✦</p>
+        {!clicked&&<div style={{marginTop:'1rem',animation:'floatY 3s ease-in-out infinite'}}>
+          <p style={{fontFamily:'Jost',fontSize:'.75rem',letterSpacing:'5px',textTransform:'uppercase',color:'rgba(120,82,12,.72)'}}>✦ Click to Open ✦</p>
         </div>}
       </div>
     </>
@@ -643,6 +718,96 @@ function AnimName({name,delay=0}){
 function Hero(){
   const cd=useCountdown(W.date);
   const units=[{l:'Days',v:String(cd.days).padStart(2,'0')},{l:'Hours',v:String(cd.hours).padStart(2,'0')},{l:'Mins',v:String(cd.minutes).padStart(2,'0')},{l:'Secs',v:String(cd.seconds).padStart(2,'0')}];
+  const scratchCanvasRef = useRef(null);
+  const scratchWrapperRef = useRef(null);
+  const [drawing,setDrawing] = useState(false);
+  const [revealed,setRevealed] = useState(false);
+
+  const setupScratch = useCallback(()=>{
+    const canvas = scratchCanvasRef.current;
+    const wrapper = scratchWrapperRef.current;
+    if(!canvas||!wrapper) return;
+    const rect = wrapper.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+    const ctx = canvas.getContext('2d');
+    if(!ctx) return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,rect.width,rect.height);
+    ctx.fillStyle = 'rgba(42,28,12,0.95)';
+    ctx.fillRect(0,0,rect.width,rect.height);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 56;
+  },[]);
+
+  useEffect(()=>{
+    setupScratch();
+    window.addEventListener('resize',setupScratch);
+    return ()=>window.removeEventListener('resize',setupScratch);
+  },[setupScratch]);
+
+  const draw = useCallback((x,y)=>{
+    const canvas = scratchCanvasRef.current;
+    if(!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const ctx = canvas.getContext('2d');
+    if(!ctx) return;
+    const px = x - rect.left;
+    const py = y - rect.top;
+    ctx.beginPath();
+    ctx.arc(px,py,28,0,Math.PI*2);
+    ctx.fill();
+    const image = ctx.getImageData(0,0,rect.width,rect.height);
+    let cleared = 0;
+    for(let i=3;i<image.data.length;i+=4){ if(image.data[i] === 0) cleared++; }
+    if(cleared / (rect.width*rect.height) > 0.27){
+      setRevealed(true);
+    }
+  },[]);
+
+  const handlePointerDown = useCallback((ev)=>{
+    if(revealed) return;
+    setDrawing(true);
+    if(ev.currentTarget && ev.pointerId) ev.currentTarget.setPointerCapture(ev.pointerId);
+    draw(ev.clientX, ev.clientY);
+  },[draw,revealed]);
+
+  const handlePointerMove = useCallback((ev)=>{
+    if(!drawing || revealed) return;
+    draw(ev.clientX, ev.clientY);
+  },[drawing,draw,revealed]);
+
+  const handlePointerUp = useCallback((ev)=>{
+    if(revealed) return;
+    setDrawing(false);
+    if(ev.currentTarget && ev.pointerId) ev.currentTarget.releasePointerCapture(ev.pointerId);
+  },[revealed]);
+
+  useEffect(()=>{
+    if(revealed){
+      const canvas = scratchCanvasRef.current;
+      if(!canvas) return;
+      canvas.style.opacity = '0';
+      canvas.style.transition = 'opacity .55s ease';
+      // Trigger sparkles at the center of the scratch area
+      try{
+        const wrap = scratchWrapperRef.current;
+        if(wrap){
+          const r = wrap.getBoundingClientRect();
+          const cx = Math.round(r.left + r.width/2);
+          const cy = Math.round(r.top + r.height/2);
+          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx,y:cy,count:36,upward:true}}));
+          // secondary wider burst
+          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx + 40,y:cy - 10,count:18,upward:true}}));
+        }
+      }catch(e){/* ignore */}
+    }
+  },[revealed]);
+
   return (
     <section id="hero" className="section top-safe" style={{textAlign:'center',paddingTop:'max(var(--SAT),60px)'}}>
       <div style={{position:'absolute',inset:0,background:'radial-gradient(ellipse at 50% 40%,rgba(212,175,55,.09) 0%,transparent 65%)',pointerEvents:'none'}}/>
@@ -665,7 +830,7 @@ function Hero(){
         </h1>
         <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.2}}
           style={{fontFamily:'Jost',fontSize:'.75rem',letterSpacing:'5px',color:'var(--M)',marginBottom:'2.5rem',textTransform:'uppercase'}}>
-          December 15th, 2026 · Karachi
+          Wedding: December 17th, 2026 · Valima: December 21st, 2026 · Karachi
         </motion.p>
         {/* Countdown */}
         <motion.div initial={{opacity:0,y:26}} animate={{opacity:1,y:0}} transition={{delay:1.4}}
@@ -677,7 +842,24 @@ function Hero(){
             </TiltCard>
           ))}
         </motion.div>
-        <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.7}}
+        <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:1.8,duration:.6}} className="reveal-card" style={{margin:'0 auto 1.8rem',maxWidth:520,padding:'1.5rem 1.4rem',textAlign:'center'}}>
+          <div className="shine-bar"/>
+          <div className="heart-mark"/>
+          <div ref={scratchWrapperRef} className={`scratch-wrapper${revealed ? ' revealed' : ''}`} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}>
+            <div className="scratch-heart" aria-hidden="true" />
+            {!revealed && <div className="scratch-prompt">Scratch to reveal</div>}
+            <div className="scratch-content">
+              <p style={{fontFamily:'Jost',letterSpacing:'4px',fontSize:'.72rem',textTransform:'uppercase',color:'rgba(255,245,225,.65)',marginBottom:'1rem'}}>Save The Date</p>
+              <h3 className="serif" style={{fontSize:'2.35rem',lineHeight:1.05,color:'#FDF8EC',margin:'0 0 .6rem',fontWeight:300}}>December 17, 2026</h3>
+              <p style={{fontFamily:'Jost',fontSize:'.92rem',letterSpacing:'1.2px',color:'rgba(253,248,236,.76)',margin:'0 0 .65rem'}}>Aqsa & Huzaifa are getting married</p>
+              <p style={{fontFamily:'Jost',fontSize:'.72rem',lineHeight:1.7,color:'rgba(253,248,236,.54)',margin:'0'}}>
+                Monday 14th Mayoon & Nikah, Thursday 17th Wedding, Monday 21st Valima.
+              </p>
+            </div>
+            <canvas ref={scratchCanvasRef} className="scratch-canvas" />
+          </div>
+        </motion.div>
+        <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.1}}
           style={{fontFamily:'Jost',fontSize:'.78rem',letterSpacing:'3px',color:'var(--G)',opacity:.6}}>{W.hashtag}</motion.p>
         <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2.2}}
           style={{marginTop:'3.5rem',display:'flex',flexDirection:'column',alignItems:'center',gap:8}}>
@@ -728,7 +910,7 @@ function Events(){
   return (
     <section id="events" className="section" style={{background:'rgba(212,175,55,.015)'}}>
       <div style={{width:'100%',maxWidth:'1100px',zIndex:1,position:'relative'}}>
-        <div style={{textAlign:'center',marginBottom:'4rem'}}><Eye>Mark Your Calendar</Eye><SecHead sub="Three magical evenings, one lifetime of memories.">Wedding Events</SecHead></div>
+        <div style={{textAlign:'center',marginBottom:'4rem'}}><Eye>Mark Your Calendar</Eye><SecHead sub="Four special moments, one lifetime of memories.">Wedding Events</SecHead></div>
         <div className="events-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.2rem'}}>
           {W.events.map((ev,i)=>(
             <motion.div key={ev.id} initial={{opacity:0,y:60}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.7,delay:i*.12}}>
@@ -758,6 +940,33 @@ function Events(){
 // ══════════════════════════════════════════════════════════════════════════
 // 🖼️  GALLERY
 // ══════════════════════════════════════════════════════════════════════════
+function LocationMap(){
+  return (
+    <section id="location" className="section" style={{background:'rgba(212,175,55,.012)'}}>
+      <div style={{width:'100%',maxWidth:1100,zIndex:1,position:'relative'}}>
+        <div style={{textAlign:'center',marginBottom:'4rem'}}><Eye>Find The Venue</Eye><SecHead sub="Exact halls and directions for wedding, nikah, mayoon, and valima.">Venue & Directions</SecHead></div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:'1.25rem'}}>
+          {W.locations.map((loc,i)=>(
+            <motion.div key={loc.id} initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.7,delay:i*.12}}>
+              <TiltCard className="gc" style={{padding:'1.75rem',minHeight:'250px',position:'relative'}} strength={5}>
+                <div style={{fontSize:'1.2rem',fontWeight:700,color:'var(--G)',marginBottom:'1rem'}}>{loc.title}</div>
+                <div style={{fontSize:'.82rem',letterSpacing:'1px',color:'var(--M)',marginBottom:'1.25rem'}}>{loc.subtitle}</div>
+                <p style={{fontSize:'.88rem',lineHeight:1.8,color:'rgba(253,248,236,.78)',marginBottom:'1.75rem'}}>{loc.address}</p>
+                <a href={loc.map} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',gap:'0.6rem',padding:'12px 16px',borderRadius:'999px',background:'rgba(212,175,55,.12)',color:'var(--G)',fontSize:'.85rem',textDecoration:'none',border:'1px solid rgba(212,175,55,.18)'}}>
+                  Open in Google Maps
+                </a>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
+        <p style={{marginTop:'2rem',textAlign:'center',color:'rgba(253,248,236,.45)',fontSize:'.8rem',letterSpacing:'1px'}}>
+          Guests can tap the map link and navigate directly to the venue from their phone.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Gallery(){
   const[lb,setLb]=useState(null);
   return (
@@ -818,7 +1027,7 @@ function RSVP(){
   return (
     <section id="rsvp" className="section">
       <div style={{width:'100%',maxWidth:680,zIndex:1,position:'relative'}}>
-        <div style={{textAlign:'center',marginBottom:'3.5rem'}}><Eye>You're Invited</Eye><SecHead sub="Your presence is the greatest gift. Let us know if you'll be joining.">RSVP</SecHead><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)',opacity:.6}}>Respond by December 1st, 2026</p></div>
+        <div style={{textAlign:'center',marginBottom:'3.5rem'}}><Eye>You're Invited</Eye><SecHead sub="Your presence is the greatest gift. Let us know if you'll be joining.">RSVP</SecHead><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)',opacity:.6}}>Respond by December 10th, 2026</p></div>
         <AnimatePresence mode="wait">
           {submitted?(
             <motion.div key="ok" initial={{opacity:0,scale:.85}} animate={{opacity:1,scale:1}} className="gc" style={{padding:'3rem 2rem',textAlign:'center'}}>
@@ -917,7 +1126,7 @@ function Footer(){
       </div>
       <p style={{fontFamily:'Jost',fontSize:'.65rem',letterSpacing:'6px',color:'var(--G)',marginBottom:'1.3rem',textTransform:'uppercase',opacity:.6}}>✦ Together Forever ✦</p>
       <h2 className="serif" style={{fontSize:'clamp(2.5rem,8vw,6rem)',fontWeight:300,lineHeight:1,...SHIMMER,animation:'shimmer 6s linear infinite',marginBottom:'.8rem'}}>Aqsa & Huzaifa</h2>
-      <p style={{fontFamily:'Jost',fontSize:'.75rem',letterSpacing:'5px',color:'var(--M)',marginBottom:'2.5rem',textTransform:'uppercase'}}>December 15, 2026</p>
+      <p style={{fontFamily:'Jost',fontSize:'.75rem',letterSpacing:'5px',color:'var(--M)',marginBottom:'2.5rem',textTransform:'uppercase'}}>Wedding: December 17, 2026 · Valima: December 21, 2026</p>
       <p style={{fontFamily:'Jost',fontSize:'.68rem',color:'rgba(253,248,236,.2)',letterSpacing:'2px'}}>Made with ❤️ · {W.hashtag}</p>
     </motion.footer>
   );
@@ -971,6 +1180,7 @@ export default function App(){
             <Hero/>
             <OurStory/>
             <Events/>
+            <LocationMap/>
             <Gallery/>
             <RSVP/>
             <Blessings/>

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Placeholder gradient tiles — replace src with actual photo paths
+// Photos: you can place real images under `public/gallery/` and reference them via `src` below.
+// Add your third image to `public/gallery/photo3.jpg` and it will appear automatically.
 const photos = [
   { id: 1, label: 'Together', gradient: 'linear-gradient(135deg, #ff69b4, #d4af37)' },
   { id: 2, label: 'Promise', gradient: 'linear-gradient(135deg, #c084fc, #ff69b4)' },
-  { id: 3, label: 'Joy',     gradient: 'linear-gradient(135deg, #d4af37, #ff9e6d)' },
-  { id: 4, label: 'Love',    gradient: 'linear-gradient(135deg, #f472b6, #c084fc)' },
-  { id: 5, label: 'Forever', gradient: 'linear-gradient(135deg, #ff69b4, #c084fc)' },
-  { id: 6, label: 'Bliss',   gradient: 'linear-gradient(135deg, #d4af37, #ff69b4)' },
+  // Using images uploaded to `public/` — these files were detected in the project root `public`
+  { id: 3, label: 'Joy',     src: '/aqsatogetterpic.jpeg', gradient: 'linear-gradient(135deg, #d4af37, #ff9e6d)' },
+  { id: 4, label: 'Love',    src: '/togetheraqsa.jpeg',    gradient: 'linear-gradient(135deg, #f472b6, #c084fc)' },
+  { id: 5, label: 'Valima Hall', src: '/valima hall.jpeg',     gradient: 'linear-gradient(135deg, #ff69b4, #c084fc)' },
+  { id: 6, label: 'Wedding Hall', src: '/wedding hall.jpeg',   gradient: 'linear-gradient(135deg, #d4af37, #ff69b4)' },
 ];
 
 export default function Gallery() {
@@ -41,22 +43,25 @@ export default function Gallery() {
               whileHover={{ scale: 1.03 }}
               onClick={() => setSelected(photo)}
               style={{
-                height: '220px',
-                borderRadius: '16px',
-                background: photo.gradient,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid rgba(255,182,193,0.2)',
-                overflow: 'hidden',
-                position: 'relative',
-              }}
+                  height: '220px',
+                  borderRadius: '16px',
+                  background: photo.gradient,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid rgba(255,182,193,0.2)',
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}
             >
-              {/* Replace this div with <img src="..." /> when you have photos */}
-              <span className="serif-font" style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '3px' }}>
-                {photo.label}
-              </span>
+                {photo.src ? (
+                  <img src={encodeURI(photo.src)} alt={photo.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span className="serif-font" style={{ fontSize: '1.5rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '3px' }}>
+                    {photo.label}
+                  </span>
+                )}
             </motion.div>
           ))}
         </div>
@@ -80,7 +85,7 @@ export default function Gallery() {
               zIndex: 999, cursor: 'pointer',
             }}
           >
-            <motion.div
+              <motion.div
               initial={{ scale: 0.7 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.7 }}
@@ -90,9 +95,13 @@ export default function Gallery() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <span className="serif-font" style={{ fontSize: '2rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '4px' }}>
-                {selected.label}
-              </span>
+              {selected.src ? (
+                <img src={encodeURI(selected.src)} alt={selected.label} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
+              ) : (
+                <span className="serif-font" style={{ fontSize: '2rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '4px' }}>
+                  {selected.label}
+                </span>
+              )}
             </motion.div>
           </motion.div>
         )}
