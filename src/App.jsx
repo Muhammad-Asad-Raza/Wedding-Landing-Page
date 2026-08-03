@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Stars } from '@react-three/drei';
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
+import emailjs from '@emailjs/browser';
+import { submitBlessing, approveBlessing, rejectBlessing, getApprovedBlessings, deleteBlessingByToken, deleteBlessingByEmail } from './firebase';
 
 // ══════════════════════════════════════════════════════════════════════════
 // 🎊  WEDDING DATA
@@ -10,15 +12,15 @@ const W = {
   bride:'Aqsa Kanwal', groom:'Huzaifa Khan',
   date: new Date('2026-12-17T18:00:00'),
   valima: new Date('2026-12-21T19:30:00'),
-  hashtag:'#AqsaHuzaifaForever',
+  hashtag:'#Aqsfa❤️Forever',
   events:[
     { id:1,icon:'🌼',accent:'#FF9EBC',name:'Mayoon + Nikah', day:'Monday',   date:'December 14, 2026',time:'Nikah 04:00 PM — 05:30 PM · Mayoon 08:00 PM — Late Night',venue:'Nikah at Jama Masjid Siddiqui · Mayoon at Home ',city:'Karachi',dress:'Traditional / Elegant',desc:'Mayoon at home and nikah at Jama Masjid Siddiqui — one beautiful day, one special story.' },
     { id:2,icon:'💒',accent:'#C084FC',name:'Wedding Celebration',day:'Thursday',date:'December 17, 2026',time:'07:00 PM — Late Night',venue:'Zam Zam Marquee',city:'Karachi',dress:'Formal / Sherwani',  desc:'A beautiful wedding celebration at Zam Zam Marquee with family and friends.' },
-    { id:3,icon:'✨',accent:'#E8B842',name:'Valima Reception',day:'Monday',   date:'December 21, 2026',time:'07:30 PM — Late Night',venue:'Zam Zam Marquee',city:'Karachi',dress:'Formal / Elegant',     desc:'A grand valima reception at Zam Zam Marquee welcoming all guests.' },
+    { id:3,icon:'✨',accent:'#E8B842',name:'Valima Reception',day:'Monday',   date:'December 21, 2026',time:'07:30 PM — Late Night',venue:'Mubeen Banquet',city:'Karachi',dress:'Formal / Elegant',     desc:'A grand valima reception at Mubeen Banquet welcoming all guests.' },
   ],
   locations:[
-    { id:1,title:'Zam Zam Marquee',subtitle:'Wedding & Nikah Venue',address:'Plot No. 10, Serve No. 185/186, Opp. Airport Police Station, Shahrah-e-Faisal, Karachi',map:'https://www.google.com/maps/search/?api=1&query=Plot+No.+10%2C+Serve+No.+185%2F186%2C+Opp.+Airport+Police+Station%2C+Shahrah-e-Faisal%2C+Karachi' },
-    { id:2,title:'Maureen Banquet',subtitle:'Valima Reception Venue',address:'C-18/20 F.B. Area, Near Ancholi, Adjacent Suzuki Showroom Shahra-e-Pakistan, Karachi',map:'https://www.google.com/maps/search/?api=1&query=C-18%2F20+F.B.+Area%2C+Near+Ancholi%2C+Adjacent+Suzuki+Showroom+Shahra-e-Pakistan%2C+Karachi' },
+    { id:1,title:'Zam Zam Marquee',subtitle:'Wedding Venue',address:'Plot No. 10, Serve No. 185/186, Opp. Airport Police Station, Shahrah-e-Faisal, Karachi',map:'https://www.google.com/maps/search/?api=1&query=Zam+Zam+Marquee+Main+Shahra-e-Faisal+Moria+Khan+Goth+Shah+Faisal+Colony+Karachi' },
+    { id:2,title:'Mubeen Banquet',subtitle:'Valima Reception Venue',address:'C-18/20 F.B. Area, Near Ancholi, Adjacent Suzuki Showroom Shahra-e-Pakistan, Karachi',map:'https://www.google.com/maps/search/?api=1&query=Mubeen+Banquet+C-18+F.B.+Area+Near+Ancholi+Karachi' },
   ],
   timeline:[
     { year:'5 Jun 2026', icon:'⭐', title:'They Met',    desc:'They met on June 5, 2026 — a moment that started everything.' },
@@ -28,12 +30,19 @@ const W = {
     { year:'17 Dec 2026', icon:'🕊️', title:'Forever Begins',desc:'December 17th, 2026 — the day two hearts officially become one.' },
   ],
   gallery:[
-    { id:1,span:2,label:'First Look',  sub:'The moment we\'ve always dreamed of',g:'linear-gradient(135deg,#FF9EBC,#FFCCE0)' },
-    { id:2,span:1,label:'The Ring',    sub:'A symbol of forever',                 g:'linear-gradient(135deg,#D4AF37,#F0D060)' },
-    { id:3,span:1,label:'Our Promise', sub:'Written in the stars',                g:'linear-gradient(135deg,#C084FC,#E9D5FF)' },
-    { id:4,span:1,label:'Together',    sub:'Two hearts, one journey',             g:'linear-gradient(135deg,#FF9EBC,#C084FC)' },
-    { id:5,span:1,label:'Joy',         sub:'Smiles that light up the room',       g:'linear-gradient(135deg,#D4AF37,#FF9EBC)' },
-    { id:6,span:2,label:'Our Moment',  sub:'A love story worth celebrating',      g:'linear-gradient(135deg,#6366F1,#C084FC,#FF9EBC)' },
+    // { id:1,span:2,label:'First Look',  sub:'A beautiful moment from your celebration', g:'linear-gradient(135deg,#FF9EBC,#FFCCE0)', src:'/aqsatogetterpic.jpeg' },
+    // { id:2,span:1,label:'Together',    sub:'Captured smiles and loving memories',      g:'linear-gradient(135deg,#C084FC,#E9D5FF)', src:'/togetheraqsa.jpeg' },
+    // { id:3,span:1,label:'Wedding Hall',sub:'Venue card for Zam Zam Marquee',          g:'linear-gradient(135deg,#D4AF37,#F0D060)', src:'/aqsahuzaifacouple.jpeg' },
+    // { id:4,span:1,label:'Valima Hall', sub:'Venue card for Maureen Banquet',         g:'linear-gradient(135deg,#FF9EBC,#C084FC)', src:'/aqsamehndi.jpeg' },
+    // { id:5,span:1,label:'Joy',         sub:'Smiles that light up the room',           g:'linear-gradient(135deg,#D4AF37,#FF9EBC)' },
+    // { id:6,span:2,label:'Our Moment',  sub:'A love story worth celebrating',          g:'linear-gradient(135deg,#6366F1,#C084FC,#FF9EBC)' },
+    { id:1, span:2, label:'Floral & Henna', sub:'A touch of traditional rose gajras and henna', g:'linear-gradient(135deg,#FF9EBC,#FFCCE0)', src:'/aqsamehndiRing.jpeg' },
+  { id:2, span:1, label:'Gifts — From Aqsa', sub:'Baat Pakki Gifts placed from bride side ', g:'linear-gradient(135deg,#C084FC,#E9D5FF)', src:'/huzaifabhaisaman.jpeg' },
+  { id:3, span:1, label:'Mehndi Art', sub:'Intricate mehndi from the Baat Pakki ceremony', g:'linear-gradient(135deg,#D4AF37,#F0D060)', src:'/aqsamehndi--.jpeg' },
+  { id:4, span:1, label:'Aqsa & Huzaifa', sub:'A precious memory from Baat Pakki', g:'linear-gradient(135deg,#FF9EBC,#C084FC)', src:'/aqsaTogether.jpeg' },
+  { id:5, span:1, label:'Celebrations', sub:'Joy and blessings all around', g:'linear-gradient(135deg,#D4AF37,#FF9EBC)', src:'/aqsahuzaifacouple.jpeg' },
+  { id:6, span:2, label:'Together Forever', sub:'Moments from the Baat Pakki celebration', g:'linear-gradient(135deg,#6366F1,#C084FC,#FF9EBC)', src:'/aqsamehndi.jpeg' },
+  { id:7, span:1, label:'Gifts — From Huzaifa', sub:'Beautiful arrangement of Baat Pakki Gifts by groom family', g:'linear-gradient(135deg,#6366F1,#C084FC,#FF9EBC)', src:'/sistersaman.jpeg' },
   ],
   // blessings:[
   //   { a:'A',name:'Ammi & Abu',   rel:'Parents of the Bride',  msg:'Our Aqsa, you are our greatest blessing. May Allah fill your new home with endless love, laughter, and barakah. We are so proud of you. 💕' },
@@ -150,19 +159,63 @@ body{
 .reveal-card .heart-mark{position:absolute;top:12px;right:12px;width:60px;height:58px;background:radial-gradient(circle at 35% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7)),radial-gradient(circle at 65% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7));border-radius:50% 50% 50% 50%;transform:rotate(45deg);box-shadow:0 0 18px rgba(212,175,55,.18);}
 .reveal-card .heart-mark:after{content:'';position:absolute;top:12px;left:12px;width:20px;height:20px;background:rgba(255,255,255,.85);border-radius:50%;}
 .scratch-wrapper{position:relative;overflow:hidden;border-radius:26px;margin:-1.2rem auto 1rem;width:calc(100% - 2.4rem);height:220px;touch-action:none;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.scratch-wrapper.revealed{touch-action:auto;}
 .scratch-wrapper.revealed .scratch-canvas{opacity:0;pointer-events:none;}
 .scratch-wrapper.revealed .scratch-prompt{opacity:0;visibility:hidden;}
 .scratch-wrapper.revealed .scratch-heart{transform:translate(-50%,-50%) rotate(45deg) scale(0.92);opacity:0.28;transition:transform .7s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
 .scratch-wrapper.revealed .scratch-content{opacity:1;transform:none;}
 .scratch-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none;z-index:4}
 .scratch-prompt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:1rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.95);z-index:5;pointer-events:none;}
-.scratch-heart{position:absolute;top:50%;left:50%;width:140px;height:130px;transform:translate(-50%,-50%) rotate(45deg);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.18),transparent 45%),radial-gradient(circle at 70% 30%,rgba(255,255,255,.18),transparent 45%);border-radius:50% 50% 0 0;box-shadow:0 0 0 1px rgba(255,255,255,.06), inset 0 0 40px rgba(255,255,255,.03);pointer-events:none;transition:transform .9s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
+.scratch-heart{position:absolute;top:50%;left:50%;width:140px;height:130px;transform:translate(-50%,-50%) rotate(45deg);background:linear-gradient(135deg,rgba(212,175,55,.6),rgba(255,158,188,.65));border-radius:50% 50% 0 0;box-shadow:0 0 25px rgba(212,175,55,.28), inset 0 0 35px rgba(255,255,255,.15);border:1px solid rgba(212,175,55,.35);pointer-events:none;transition:transform .9s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
 .scratch-content{position:relative;z-index:2;padding:28px 22px 12px;opacity:0;transform:translateY(8px) scale(.995);transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1)}
 
 @keyframes popHeart{0%{transform:translate(-50%,-50%) rotate(45deg) scale(.6);opacity:0}45%{transform:translate(-50%,-50%) rotate(45deg) scale(1.06);opacity:1}70%{transform:translate(-50%,-50%) rotate(45deg) scale(.98)}100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}}
 .scratch-wrapper.revealed .scratch-heart{animation:popHeart .9s cubic-bezier(.2,.9,.28,1) forwards}
 /* ── Tap pulse ── */
 @keyframes tapPulse{0%{transform:scale(1)}50%{transform:scale(.96)}100%{transform:scale(1)}}
+
+/* ── Vertical Marquee ── */
+@keyframes scrollVert {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes scrollHoriz {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-container {
+  overflow: hidden;
+  max-height: 600px;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+}
+.marquee-vert {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  animation: scrollVert 45s linear infinite;
+}
+.marquee-vert:hover {
+  animation-play-state: paused;
+}
+
+@media (min-width: 992px) {
+  .marquee-container {
+    max-height: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .marquee-vert {
+    flex-direction: row;
+    width: max-content;
+    animation: scrollHoriz 50s linear infinite;
+  }
+  .marquee-vert > div {
+    width: 380px !important;
+    flex-shrink: 0;
+  }
+}
 
 /* ── Linen ── */
 .env-linen{
@@ -208,10 +261,15 @@ option{background:#1D1008;color:#FDF8EC}
 
 /* ══ RESPONSIVE BREAKPOINTS ══ */
 
-/* Tablet */
-@media(max-width:900px){
+/* Desktop down to tablet */
+@media(max-width:1024px){
+  .section{padding:4rem 1.25rem 6rem}
   .events-grid{grid-template-columns:1fr!important}
   .bless-grid{grid-template-columns:1fr 1fr!important}
+  .gallery-grid{grid-template-columns:repeat(2,1fr)!important;grid-auto-rows:minmax(180px,auto)!important}
+  .location-grid{grid-template-columns:1fr!important}
+  .tl-wrap{padding-left:24px}
+  .tl-content{width:100%!important}
 }
 
 /* Mobile */
@@ -220,18 +278,18 @@ option{background:#1D1008;color:#FDF8EC}
   .side-nav-wrap{display:none!important}
   .progress-bar{display:none}
 
-  .section{padding:4rem 1.25rem calc(var(--BNH) + var(--SAB) + 2rem)}
+  .section{padding:3.5rem 1rem calc(var(--BNH) + var(--SAB) + 2rem)}
 
   /* Timeline — left-rail on mobile */
-  .tl-wrap{padding-left:30px}
+  .tl-wrap{padding-left:24px}
   .tl-rail{left:0!important}
-  .tl-item{justify-content:flex-start!important;margin-bottom:2rem!important}
+  .tl-item{justify-content:flex-start!important;margin-bottom:1.8rem!important}
   .tl-content{width:100%!important;text-align:left!important}
   .tl-dot{left:-6px!important;top:1.8rem!important;transform:none!important}
   .tl-year-badge{left:14px!important;top:0!important;transform:none!important}
 
   /* Gallery */
-  .gallery-grid{grid-template-columns:1fr 1fr!important;grid-auto-rows:140px!important}
+  .gallery-grid{grid-template-columns:1fr!important;grid-auto-rows:minmax(160px,auto)!important}
   .gal-span{grid-column:span 1!important}
 
   /* Events */
@@ -239,6 +297,9 @@ option{background:#1D1008;color:#FDF8EC}
 
   /* Blessings */
   .bless-grid{grid-template-columns:1fr!important}
+
+  /* Location */
+  .location-grid{grid-template-columns:1fr!important}
 
   /* RSVP */
   .rsvp-2col{grid-template-columns:1fr!important}
@@ -250,18 +311,25 @@ option{background:#1D1008;color:#FDF8EC}
   .cd-num{font-size:2rem!important}
 
   /* Font scaling */
-  .hero-name{font-size:clamp(3.5rem,15vw,5.5rem)!important}
-  .sec-title{font-size:clamp(2rem,7vw,3rem)!important}
+  .hero-name{font-size:clamp(3rem,14vw,5.2rem)!important}
+  .sec-title{font-size:clamp(1.95rem,6vw,2.8rem)!important}
 }
 
 /* Small mobile */
-@media(max-width:400px){
-  .hero-name{font-size:clamp(3rem,14vw,4.5rem)!important}
-  .gallery-grid{grid-template-columns:1fr!important}
-  .bless-grid{grid-template-columns:1fr!important}
-  .cd-box{min-width:62px!important;padding:.8rem .5rem!important}
+@media(max-width:500px){
+  .section{padding:3rem .85rem calc(var(--BNH) + var(--SAB) + 1.8rem)}
+  .cd-box{min-width:60px!important;padding:.85rem .7rem!important}
   .cd-num{font-size:1.7rem!important}
-  .section{padding-left:1rem;padding-right:1rem}
+  .hero-name{font-size:clamp(2.6rem,18vw,4.4rem)!important}
+  .sec-title{font-size:clamp(1.8rem,9vw,2.4rem)!important}
+  .rsvp-attend{gap:.5rem!important}
+}
+
+@media(max-width:400px){
+  .gallery-grid{grid-template-columns:1fr!important}
+  .section{padding:2.5rem .75rem calc(var(--BNH) + var(--SAB) + 1.5rem)}
+  .cd-box{min-width:54px!important;padding:.75rem .6rem!important}
+  .cd-num{font-size:1.6rem!important}
 }
 `;
 
@@ -304,8 +372,10 @@ function Diamond3D({pos,size,color,spd,op}){
 }
 function Scene(){
   const mobile=isMobile();
+  if (mobile) return null; // Disable 3D scene completely on mobile to prevent scroll lag
+
   return (
-    <Canvas camera={{position:[0,0,10],fov:50}} style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none'}}>
+    <Canvas camera={{position:[0,0,10],fov:50}} style={{position:'fixed',inset:0,zIndex:0,pointerEvents:'none'}} dpr={[1, 1.5]}>
       <ambientLight intensity={.22} color="#FDF8EC"/>
       <directionalLight position={[5,5,3]} intensity={.8} color="#D4AF37"/>
       <pointLight position={[-5,-4,-3]} intensity={.35} color="#E8B4B8"/>
@@ -325,7 +395,10 @@ function Scene(){
 // ══════════════════════════════════════════════════════════════════════════
 function SparkleCanvas(){
   const ref=useRef();
+  const mobile=isMobile();
+  
   useEffect(()=>{
+    if (mobile) return; // Disable canvas sparkles on mobile to prevent scroll lag
     const canvas=ref.current; if(!canvas) return;
     const ctx=canvas.getContext('2d');
     const resize=()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;};
@@ -441,7 +514,6 @@ function SparkleCanvas(){
       raf=requestAnimationFrame(loop);
     };
     loop();
-    // Listen for programmatic sparkle bursts (dispatched from other components)
     const onBurst = (ev)=>{
       try{
         const d = ev.detail || {};
@@ -464,25 +536,37 @@ function SparkleCanvas(){
       cancelAnimationFrame(raf);
     };
   },[]);
-  return <canvas ref={ref} style={{position:'fixed',inset:0,zIndex:9999,pointerEvents:'none'}}/>;
+  return mobile ? null : <canvas ref={ref} style={{position:'fixed',inset:0,zIndex:9999,pointerEvents:'none'}}/>;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
 // 🌸  FALLING PETALS
 // ══════════════════════════════════════════════════════════════════════════
-const PETALS=Array.from({length: isMobile() ? 12 : 22},(_,i)=>({
-  id:i,left:`${(i/22)*100+(Math.random()-.5)*6}%`,
-  delay:`${(Math.random()*18).toFixed(1)}s`,dur:`${(13+Math.random()*9).toFixed(1)}s`,
-  size:`${(9+Math.random()*11).toFixed(0)}px`,
-  color:['#FFB7C5','#FFDDE1','#FFE8EC','#F5C0D0','#E8C4C4'][Math.floor(Math.random()*5)],
-  dx:`${((Math.random()-.5)*160).toFixed(0)}px`,
-  br:Math.random()>.5?'50% 0 50% 0':'50% 50% 0 50%',
-}));
+const PETALS=Array.from({length: isMobile() ? 15 : 25},(_,i)=>{
+  const isHeart = Math.random() > 0.6;
+  return {
+    id:i,
+    left:`${(i/(isMobile() ? 15 : 25))*100+(Math.random()-.5)*6}%`,
+    delay:`${(Math.random()*18).toFixed(1)}s`,
+    dur:`${(12+Math.random()*8).toFixed(1)}s`,
+    size: isHeart ? `${(12+Math.random()*10).toFixed(0)}px` : `${(9+Math.random()*11).toFixed(0)}px`,
+    color: isHeart ? ['#FF9EBC','#FFB6C1','#FFC0CB'][Math.floor(Math.random()*3)] : ['#FFB7C5','#FFDDE1','#FFE8EC','#F5C0D0','#E8C4C4'][Math.floor(Math.random()*5)],
+    dx:`${((Math.random()-.5)*160).toFixed(0)}px`,
+    br: Math.random()>.5?'50% 0 50% 0':'50% 50% 0 50%',
+    type: isHeart ? 'heart' : 'petal'
+  };
+});
 function FallingPetals(){
   return (
     <div style={{position:'fixed',inset:0,zIndex:1,pointerEvents:'none',overflow:'hidden'}}>
       {PETALS.map(p=>(
-        <div key={p.id} style={{position:'absolute',top:'-30px',left:p.left,width:p.size,height:p.size,borderRadius:p.br,background:p.color,opacity:0,'--dx':p.dx,animation:`petal ${p.dur} ${p.delay} infinite linear`}}/>
+        p.type === 'heart' ? (
+          <div key={p.id} style={{position:'absolute',top:'-30px',left:p.left,width:p.size,height:p.size,color:p.color,opacity:0,'--dx':p.dx,animation:`petal ${p.dur} ${p.delay} infinite linear`,fontSize:p.size,display:'flex',alignItems:'center',justifyContent:'center',userSelect:'none',willChange:'transform, opacity'}}>
+            ❤️
+          </div>
+        ) : (
+          <div key={p.id} style={{position:'absolute',top:'-30px',left:p.left,width:p.size,height:p.size,borderRadius:p.br,background:p.color,opacity:0,'--dx':p.dx,animation:`petal ${p.dur} ${p.delay} infinite linear`,willChange:'transform, opacity'}}/>
+        )
       ))}
     </div>
   );
@@ -624,8 +708,49 @@ function CornerSVG({style,d}){
   return <svg width="36" height="36" style={style} viewBox="0 0 40 40"><path d={path} stroke="#D4AF37" strokeWidth="1.2" fill="none" opacity=".5"/><circle cx={cx} cy={cy} r="2.5" fill="#D4AF37" opacity=".5"/></svg>;
 }
 function BurstParticles({active}){
-  const pts=useMemo(()=>Array.from({length:24},(_,i)=>{const a=(i/24)*Math.PI*2,d=80+Math.random()*120;return{x:Math.cos(a)*d,y:Math.sin(a)*d,size:3+Math.random()*5,color:['#D4AF37','#E8CC6A','#F0D060','#FFDDE8'][Math.floor(Math.random()*4)]};}),[]);
-  return <AnimatePresence>{active&&pts.map((p,i)=><motion.div key={i} initial={{x:0,y:0,opacity:1,scale:1}} animate={{x:p.x,y:p.y,opacity:0,scale:0}} transition={{duration:.9,delay:i*.016,ease:'easeOut'}} style={{position:'absolute',top:'50%',left:'50%',width:p.size,height:p.size,borderRadius:'50%',background:p.color,marginLeft:-p.size/2,marginTop:-p.size/2,pointerEvents:'none'}}/>)}</AnimatePresence>;
+  const pts=useMemo(()=>Array.from({length:40},(_,i)=>{
+    const a=(i/40)*Math.PI*2 + (Math.random() - 0.5) * 0.3,
+          d=100+Math.random()*180;
+    const type = Math.random() > 0.4 ? 'heart' : 'sparkle';
+    return {
+      x: Math.cos(a)*d,
+      y: Math.sin(a)*d,
+      size: type === 'heart' ? 14 + Math.random()*12 : 10 + Math.random()*8,
+      color: type === 'heart' ? ['#FF9EBC','#FF69B4','#FFB6C1'][Math.floor(Math.random()*3)] : ['#D4AF37','#E8CC6A','#F0D060','#FDF8EC'][Math.floor(Math.random()*4)],
+      type,
+      rot: (Math.random() - 0.5) * 180
+    };
+  }),[]);
+  return (
+    <AnimatePresence>
+      {active && pts.map((p,i)=>(
+        <motion.div
+          key={i}
+          initial={{x:0,y:0,opacity:1,scale:0.4,rotate:0}}
+          animate={{x:p.x,y:p.y,opacity:0,scale:1.2,rotate:p.rot}}
+          transition={{duration:1.2,delay:i*.008,ease:[0.1,0.8,0.3,1]}}
+          style={{
+            position:'absolute',
+            top:'50%',
+            left:'50%',
+            width:p.size,
+            height:p.size,
+            marginLeft:-p.size/2,
+            marginTop:-p.size/2,
+            pointerEvents:'none',
+            display:'flex',
+            alignItems:'center',
+            justifyContent:'center',
+            color:p.color,
+            fontSize: p.size,
+            lineHeight: 1
+          }}
+        >
+          {p.type === 'heart' ? '❤️' : '✦'}
+        </motion.div>
+      ))}
+    </AnimatePresence>
+  );
 }
 function Envelope({onOpen}){
   const[clicked,setClicked]=useState(false);
@@ -761,6 +886,8 @@ function Hero(){
     ctx.beginPath();
     ctx.arc(px,py,28,0,Math.PI*2);
     ctx.fill();
+    // Dispatch sparkles during scratching
+    window.dispatchEvent(new CustomEvent('sparkle-burst', { detail: { x, y, count: 2, upward: true } }));
     const image = ctx.getImageData(0,0,rect.width,rect.height);
     let cleared = 0;
     for(let i=3;i<image.data.length;i+=4){ if(image.data[i] === 0) cleared++; }
@@ -793,16 +920,16 @@ function Hero(){
       if(!canvas) return;
       canvas.style.opacity = '0';
       canvas.style.transition = 'opacity .55s ease';
-      // Trigger sparkles at the center of the scratch area
+      // Trigger multi-point massive sparkle explosion at reveal!
       try{
         const wrap = scratchWrapperRef.current;
         if(wrap){
           const r = wrap.getBoundingClientRect();
           const cx = Math.round(r.left + r.width/2);
           const cy = Math.round(r.top + r.height/2);
-          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx,y:cy,count:36,upward:true}}));
-          // secondary wider burst
-          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx + 40,y:cy - 10,count:18,upward:true}}));
+          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx,y:cy,count:45,upward:true}}));
+          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx - 80,y:cy,count:20,upward:true}}));
+          window.dispatchEvent(new CustomEvent('sparkle-burst',{detail:{x:cx + 80,y:cy,count:20,upward:true}}));
         }
       }catch(e){/* ignore */}
     }
@@ -830,7 +957,7 @@ function Hero(){
         </h1>
         <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:1.2}}
           style={{fontFamily:'Jost',fontSize:'.75rem',letterSpacing:'5px',color:'var(--M)',marginBottom:'2.5rem',textTransform:'uppercase'}}>
-          Wedding: December 17th, 2026 · Valima: December 21st, 2026 · Karachi
+          #Aqsfa❤️ Wedding Ceremony
         </motion.p>
         {/* Countdown */}
         <motion.div initial={{opacity:0,y:26}} animate={{opacity:1,y:0}} transition={{delay:1.4}}
@@ -945,17 +1072,20 @@ function LocationMap(){
     <section id="location" className="section" style={{background:'rgba(212,175,55,.012)'}}>
       <div style={{width:'100%',maxWidth:1100,zIndex:1,position:'relative'}}>
         <div style={{textAlign:'center',marginBottom:'4rem'}}><Eye>Find The Venue</Eye><SecHead sub="Exact halls and directions for wedding, nikah, mayoon, and valima.">Venue & Directions</SecHead></div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:'1.25rem'}}>
+        <div className="location-grid" style={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:'1.25rem'}}>
           {W.locations.map((loc,i)=>(
             <motion.div key={loc.id} initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.7,delay:i*.12}}>
-              <TiltCard className="gc" style={{padding:'1.75rem',minHeight:'250px',position:'relative'}} strength={5}>
-                <div style={{fontSize:'1.2rem',fontWeight:700,color:'var(--G)',marginBottom:'1rem'}}>{loc.title}</div>
-                <div style={{fontSize:'.82rem',letterSpacing:'1px',color:'var(--M)',marginBottom:'1.25rem'}}>{loc.subtitle}</div>
-                <p style={{fontSize:'.88rem',lineHeight:1.8,color:'rgba(253,248,236,.78)',marginBottom:'1.75rem'}}>{loc.address}</p>
-                <a href={loc.map} target="_blank" rel="noreferrer" style={{display:'inline-flex',alignItems:'center',gap:'0.6rem',padding:'12px 16px',borderRadius:'999px',background:'rgba(212,175,55,.12)',color:'var(--G)',fontSize:'.85rem',textDecoration:'none',border:'1px solid rgba(212,175,55,.18)'}}>
-                  Open in Google Maps
-                </a>
-              </TiltCard>
+              <a href={loc.map} target="_blank" rel="noreferrer" style={{textDecoration:'none',display:'block'}}>
+                <TiltCard className="gc" style={{padding:'1.75rem',minHeight:'250px',position:'relative',cursor:'pointer'}} strength={5}>
+                  <div style={{position:'absolute',top:'1rem',right:'1.2rem',fontSize:'.6rem',letterSpacing:'2px',color:'rgba(212,175,55,.5)',textTransform:'uppercase'}}>Tap to open ↗</div>
+                  <div style={{fontSize:'1.2rem',fontWeight:700,color:'var(--G)',marginBottom:'.5rem'}}>{loc.title}</div>
+                  <div style={{fontSize:'.78rem',letterSpacing:'1.5px',color:'var(--M)',marginBottom:'1.1rem',textTransform:'uppercase'}}>{loc.subtitle}</div>
+                  <p style={{fontSize:'.87rem',lineHeight:1.85,color:'rgba(253,248,236,.72)',marginBottom:'1.5rem'}}>{loc.address}</p>
+                  <div style={{display:'inline-flex',alignItems:'center',gap:'0.5rem',padding:'10px 18px',borderRadius:'999px',background:'rgba(212,175,55,.13)',color:'var(--G)',fontSize:'.8rem',border:'1px solid rgba(212,175,55,.22)'}}>
+                    📍 Open in Google Maps
+                  </div>
+                </TiltCard>
+              </a>
             </motion.div>
           ))}
         </div>
@@ -979,7 +1109,12 @@ function Gallery(){
               whileHover={{scale:1.03}} whileTap={{scale:.97}}
               onClick={()=>setLb(item)}
               className="gal-span"
-              style={{gridColumn:item.span>1?`span ${item.span}`:undefined,background:item.g,borderRadius:16,cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(255,255,255,.1)'}}>
+              style={{gridColumn:item.span>1?`span ${item.span}`:undefined,borderRadius:16,cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden',border:'1px solid rgba(255,255,255,.1)',background:item.src?'transparent':item.g}}>
+              {item.src ? (
+                <img src={encodeURI(item.src)} alt={item.label} style={{width:'100%',height:'100%',objectFit:'cover',position:'absolute',inset:0}} />
+              ) : (
+                <div style={{position:'absolute',inset:0,background:item.g}} />
+              )}
               <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)',borderRadius:16}}/>
               <div style={{position:'absolute',bottom:'1rem',left:'1.2rem',right:'1.2rem',textAlign:'left'}}>
                 <p className="serif" style={{fontSize:'1.3rem',color:'#fff',fontWeight:300,lineHeight:1}}>{item.label}</p>
@@ -998,8 +1133,9 @@ function Gallery(){
             style={{position:'fixed',inset:0,background:'rgba(0,0,0,.88)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(8px)',padding:'1.5rem'}}>
             <motion.div initial={{scale:.75,opacity:0}} animate={{scale:1,opacity:1}} exit={{scale:.75,opacity:0}} transition={{type:'spring',stiffness:320,damping:26}}
               onClick={e=>e.stopPropagation()}
-              style={{width:'min(90vw,700px)',height:'min(75vh,500px)',borderRadius:22,background:lb.g,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',padding:'2rem',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 55%)'}}/>
+              style={{width:'min(90vw,700px)',height:'min(80vh,560px)',borderRadius:22,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'flex-end',padding:'2rem',position:'relative',overflow:'hidden'}}>
+              <img src={lb.src} alt={lb.label} style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',borderRadius:22}}/>
+              <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 50%)',borderRadius:22}}/>
               <div style={{position:'relative',zIndex:1,textAlign:'center'}}>
                 <h3 className="serif" style={{fontSize:'2.2rem',fontWeight:300,color:'#fff'}}>{lb.label}</h3>
                 <p style={{fontFamily:'Jost',fontSize:'.75rem',color:'rgba(255,255,255,.6)',letterSpacing:'2px',marginTop:6}}>{lb.sub}</p>
@@ -1016,25 +1152,73 @@ function Gallery(){
 // ══════════════════════════════════════════════════════════════════════════
 // 📋  RSVP
 // ══════════════════════════════════════════════════════════════════════════
-function RSVP(){
-  const[form,setForm]=useState({name:'',phone:'',email:'',attending:'yes',events:[],food:'nonveg',blessing:''});
+function RSVP({ myTokens, setMyTokens }){
+  const[form,setForm]=useState({name:'',phone:'',email:'',side:'bride',relation:'',blessing:''});
   const[submitted,setSubmitted]=useState(false);
   const[loading,setLoading]=useState(false);
-  const inp=e=>{const{name,type,value,checked}=e.target;if(type==='checkbox')setForm(f=>({...f,events:checked?[...f.events,value]:f.events.filter(x=>x!==value)}));else setForm(f=>({...f,[name]:value}));};
-  const submit=async e=>{e.preventDefault();setLoading(true);await W.rsvp.submit(form);setTimeout(()=>{setLoading(false);setSubmitted(true);},900);};
+  const inp=e=>{const{name,value}=e.target;setForm(f=>({...f,[name]:value}));};
+
+  const sideOptions=[
+    {v:'bride', l:"Bride's Side 👰"},
+    {v:'groom', l:"Groom's Side 🤵"}
+  ];
+
+  const submit=async e=>{
+    e.preventDefault();
+    if(!form.blessing.trim()){setLoading(false); return alert('Please write a blessing first!');}
+    setLoading(true);
+    try{
+      // 1. Save to Firebase Firestore
+      const relLabel = form.relation
+        ? `${form.relation} of the ${form.side === 'bride' ? 'Bride' : 'Groom'}`
+        : (form.side === 'bride' ? "Bride's Family" : "Groom's Family");
+      const { id, token } = await submitBlessing({
+        name: form.name || 'Guest',
+        rel: relLabel,
+        side: form.side,
+        msg: form.blessing,
+        phone: form.phone,
+        email: form.email,
+        a: (form.name||'G')[0].toUpperCase()
+      });
+      // Save token to localStorage for easy deletion
+      const myTokensList = JSON.parse(localStorage.getItem('my_blessings') || '[]');
+      myTokensList.push(token);
+      localStorage.setItem('my_blessings', JSON.stringify(myTokensList));
+      if (setMyTokens) setMyTokens(myTokensList);
+
+      // 2. Send email via EmailJS
+      const base = window.location.origin + window.location.pathname;
+      const approveUrl = `${base}?bless_approve=${id}`;
+      const rejectUrl  = `${base}?bless_reject=${id}`;
+      await emailjs.send('service_0wakrxg','template_mgwvdo8',{
+        guest_name:  form.name  || '—',
+        guest_phone: form.phone || '—',
+        guest_email: form.email || '—',
+        relation:    relLabel,
+        side:        form.side === 'bride' ? "Bride's Side" : "Groom's Side",
+        blessing:    form.blessing || '(No message)',
+        approve_url: approveUrl,
+        reject_url:  rejectUrl
+      }, 'sbda69FcrugfrGnGD');
+    }catch(err){ console.error('Submit error:',err); }
+    setLoading(false);
+    setSubmitted(true);
+  };
+
   const IS={width:'100%',background:'rgba(253,248,236,.04)',border:'1px solid rgba(212,175,55,.2)',borderRadius:14,padding:'14px 18px',color:'var(--C)',fontFamily:'Jost,sans-serif',fontSize:'16px',outline:'none',transition:'border-color .3s,background .3s',WebkitAppearance:'none'};
   const LS={display:'block',fontSize:'.65rem',letterSpacing:'3px',color:'var(--G)',marginBottom:8,textTransform:'uppercase',fontFamily:'Jost,sans-serif'};
   return (
     <section id="rsvp" className="section">
       <div style={{width:'100%',maxWidth:680,zIndex:1,position:'relative'}}>
-        <div style={{textAlign:'center',marginBottom:'3.5rem'}}><Eye>You're Invited</Eye><SecHead sub="Your presence is the greatest gift. Let us know if you'll be joining.">RSVP</SecHead><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)',opacity:.6}}>Respond by December 10th, 2026</p></div>
+        <div style={{textAlign:'center',marginBottom:'3.5rem'}}><Eye>You're Invited</Eye><SecHead sub="Your presence and prayers mean the world to us. Confirm your attendance and leave a sweet note for Aqsa & Huzaifa!💖">RSVP</SecHead><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)',opacity:.6}}>Respond by December 10th, 2026</p></div>
         <AnimatePresence mode="wait">
           {submitted?(
             <motion.div key="ok" initial={{opacity:0,scale:.85}} animate={{opacity:1,scale:1}} className="gc" style={{padding:'3rem 2rem',textAlign:'center'}}>
               <motion.div initial={{scale:0}} animate={{scale:1}} transition={{type:'spring',delay:.2}} style={{fontSize:'3rem',marginBottom:'1rem'}}>💌</motion.div>
               <h3 className="serif" style={{fontSize:'2.2rem',fontWeight:300,color:'var(--C)',marginBottom:'.8rem'}}>Thank You, {form.name.split(' ')[0]}!</h3>
-              <p style={{color:'var(--M)',lineHeight:1.88,fontSize:'.9rem'}}>Your RSVP has been received with joy. We look forward to celebrating with you. May Allah bless you and your family.</p>
-              <div style={{marginTop:'1.8rem',padding:'1rem',borderRadius:12,background:'rgba(212,175,55,.07)',border:'1px solid rgba(212,175,55,.18)'}}><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)'}}>{W.hashtag}</p></div>
+              <p style={{color:'var(--M)',lineHeight:1.88,fontSize:'.9rem'}}>Your RSVP and blessing have been received with joy. May Allah bless you and your family.</p>
+              <div style={{marginTop:'1.2rem',padding:'1rem',borderRadius:12,background:'rgba(212,175,55,.07)',border:'1px solid rgba(212,175,55,.18)'}}><p style={{fontSize:'.75rem',letterSpacing:'2px',color:'var(--G)'}}>{W.hashtag}</p></div>
             </motion.div>
           ):(
             <motion.form key="form" onSubmit={submit} initial={{opacity:0}} animate={{opacity:1}} className="gc" style={{padding:'2rem 1.5rem'}}>
@@ -1044,35 +1228,40 @@ function RSVP(){
                   <div><label style={LS}>WhatsApp</label><input className="pin" style={IS} type="tel" name="phone" value={form.phone} onChange={inp} placeholder="+92 3XX XXXXXXX"/></div>
                   <div><label style={LS}>Email</label><input className="pin" style={IS} type="email" name="email" value={form.email} onChange={inp} placeholder="you@email.com"/></div>
                 </div>
-                <div><label style={LS}>Attending?</label>
-                  <div className="rsvp-attend" style={{display:'flex',gap:'.75rem'}}>
-                    {[{v:'yes',l:'Yes, I\'ll be there! 🎊'},{v:'no',l:'Sadly, unable to attend'}].map(({v,l})=>(
-                      <label key={v} style={{flex:1,display:'flex',alignItems:'center',gap:10,padding:'13px 14px',borderRadius:14,border:`1px solid ${form.attending===v?'rgba(212,175,55,.5)':'rgba(212,175,55,.15)'}`,cursor:'pointer',background:form.attending===v?'rgba(212,175,55,.08)':'transparent',transition:'all .2s',fontSize:'.84rem',color:'var(--C)',minHeight:48}}>
-                        <input type="radio" name="attending" value={v} checked={form.attending===v} onChange={inp} style={{accentColor:'var(--G)',width:18,height:18}}/>{l}
+
+                {/* Side Selector */}
+                <div>
+                  <label style={LS}>You are from —</label>
+                  <div style={{display:'flex',gap:'.75rem'}}>
+                    {sideOptions.map(({v,l})=>(
+                      <label key={v} style={{flex:1,display:'flex',alignItems:'center',gap:10,padding:'13px 14px',borderRadius:14,border:`1px solid ${form.side===v?'rgba(212,175,55,.5)':'rgba(212,175,55,.15)'}`,cursor:'pointer',background:form.side===v?'rgba(212,175,55,.09)':'transparent',transition:'all .2s',fontSize:'.84rem',color:'var(--C)',minHeight:48}}>
+                        <input type="radio" name="side" value={v} checked={form.side===v} onChange={inp} style={{accentColor:'var(--G)',width:18,height:18}}/>{l}
                       </label>
                     ))}
                   </div>
                 </div>
-                <div><label style={LS}>Events</label>
-                  <div style={{display:'flex',gap:'.6rem',flexWrap:'wrap'}}>
-                    {W.events.map(ev=>(
-                      <label key={ev.id} style={{display:'flex',alignItems:'center',gap:7,padding:'10px 14px',borderRadius:'100px',border:`1px solid ${form.events.includes(ev.name)?ev.accent+'77':'rgba(212,175,55,.15)'}`,cursor:'pointer',background:form.events.includes(ev.name)?ev.accent+'10':'transparent',transition:'all .2s',fontSize:'.8rem',color:'var(--C)',whiteSpace:'nowrap',minHeight:44}}>
-                        <input type="checkbox" value={ev.name} checked={form.events.includes(ev.name)} onChange={inp} style={{accentColor:ev.accent,width:16,height:16}}/>{ev.icon} {ev.name}
-                      </label>
-                    ))}
-                  </div>
+
+                {/* Relation input */}
+                <div>
+                  <label style={LS}>Your Relation</label>
+                  <input className="pin" style={IS} type="text" name="relation" value={form.relation} onChange={inp}
+                    placeholder={form.side==='bride' ? "e.g. Phuppo, Chacha, Dost, Cousin..." : "e.g. Khala, Mamu, Friend, Bhai jan..."}
+                  />
+                  <p style={{fontSize:'.65rem',color:'rgba(253,248,236,.35)',marginTop:'5px',fontStyle:'italic'}}>Aapka rishta kia ha?😊</p>
                 </div>
-                <div><label style={LS}>Food Preference</label>
-                  <select className="pin" style={IS} name="food" value={form.food} onChange={inp}>
-                    <option value="nonveg">Non-Vegetarian</option><option value="veg">Vegetarian</option><option value="vegan">Vegan</option><option value="halal">Halal Only</option>
-                  </select>
+
+                {/* Blessing textarea */}
+                <div>
+                  <label style={LS}>Your Blessing ✨</label>
+                  <textarea className="pin" style={{...IS,height:110,resize:'none'}} name="blessing" value={form.blessing} onChange={inp} placeholder="Share your warmest wishes for Aqsa & Huzaifa..." required/>
+                  <p style={{fontSize:'.68rem',color:'var(--G)',opacity:.7,fontStyle:'italic',marginTop:'6px'}}>
+                    💌 Aapki blessing review ke baad Blessings Wall par add ho jaegi.
+                  </p>
                 </div>
-                <div><label style={LS}>Your Blessing ✨</label>
-                  <textarea className="pin" style={{...IS,height:100,resize:'none'}} name="blessing" value={form.blessing} onChange={inp} placeholder="Share your warmest wishes..."/>
-                </div>
+
                 <motion.button type="submit" disabled={loading} whileHover={{scale:1.02}} whileTap={{scale:.96}}
                   style={{width:'100%',padding:'16px',background:'linear-gradient(135deg,rgba(212,175,55,.18),rgba(212,175,55,.08))',border:'1px solid rgba(212,175,55,.38)',borderRadius:14,color:'var(--G)',fontFamily:'Jost,sans-serif',fontSize:'.8rem',letterSpacing:'4px',textTransform:'uppercase',cursor:loading?'wait':'pointer',transition:'all .3s',minHeight:52}}>
-                  {loading?'✦ Sending... ✦':'✦ Confirm Attendance ✦'}
+                  {loading?'✦ Sending... ✦':'✦ CONFIRM & SEND BLESSINGSe ✦'}
                 </motion.button>
               </div>
             </motion.form>
@@ -1086,27 +1275,207 @@ function RSVP(){
 // ══════════════════════════════════════════════════════════════════════════
 // 💬  BLESSINGS
 // ══════════════════════════════════════════════════════════════════════════
-function Blessings(){
+function Blessings({ myTokens, setMyTokens }){
+  const [fbBlessings, setFbBlessings] = useState([]);
+  const [deleteEmail, setDeleteEmail] = useState('');
+  const [delStatus,   setDelStatus]   = useState('');
+  const [approveMsg,  setApproveMsg]  = useState('');
+  const [loadingBless,setLoadingBless]= useState(true);
+  const [isAutoPlay,  setIsAutoPlay]  = useState(true);
+
+  useEffect(()=>{
+    const params = new URLSearchParams(window.location.search);
+    const appId = params.get('bless_approve');
+    const rejId = params.get('bless_reject');
+
+    const run = async () => {
+      if(appId){
+        try{ 
+          await approveBlessing(appId); 
+          setApproveMsg('✅ Blessing approved successfully! It is now live.'); 
+        } catch(e){ 
+          console.error(e);
+          setApproveMsg('⚠️ Could not approve (it may be already approved).'); 
+        }
+      } else if(rejId){
+        try{ 
+          await rejectBlessing(rejId); 
+          setApproveMsg('❌ Blessing rejected.'); 
+        } catch(e){ 
+          console.error(e);
+          setApproveMsg('⚠️ Could not reject.'); 
+        }
+      }
+      
+      // Clean URL parameters
+      if(appId||rejId){
+        const clean = window.location.pathname;
+        window.history.replaceState({}, '', clean);
+      }
+
+      // Fetch approved blessings from Firestore
+      try {
+        const data = await getApprovedBlessings();
+        setFbBlessings(data);
+      } catch (err) {
+        console.error("Firestore error:", err);
+      } finally {
+        setLoadingBless(false);
+      }
+    };
+
+    run();
+  },[]);
+
+  const handleDeleteCard = async (token) => {
+    if(!confirm('Are you sure you want to delete your blessing?')) return;
+    const deletedIds = await deleteBlessingByToken(token);
+    if(deletedIds && deletedIds.length > 0){
+      setFbBlessings(prev=>prev.filter(b=>!deletedIds.includes(b.id)));
+      const updated = myTokens.filter(t => t !== token);
+      setMyTokens(updated);
+      localStorage.setItem('my_blessings', JSON.stringify(updated));
+    }
+  };
+
+  const handleDeleteByEmail = async()=>{
+    if(!deleteEmail.trim()){ setDelStatus('⚠️ Please enter your email address.'); return; }
+    setDelStatus('Deleting...');
+    const deletedIds = await deleteBlessingByEmail(deleteEmail.trim());
+    if(deletedIds && deletedIds.length > 0){
+      setFbBlessings(prev=>prev.filter(b=>!deletedIds.includes(b.id)));
+      setDelStatus('✅ Your blessing has been removed.');
+      setDeleteEmail('');
+    } else {
+      setDelStatus('❌ Blessing not found with this email. Only you can delete your own blessing.');
+    }
+  };
+
+  // Merge local static blessings with Firestore live approved blessings
+  const allBlessings = [...(W.blessings||[]), ...fbBlessings];
+  // Duplicate array for infinite scroll
+  const marqueeList = [...allBlessings, ...allBlessings];
+  
+  const IS2={background:'rgba(253,248,236,.04)',border:'1px solid rgba(212,175,55,.2)',borderRadius:12,padding:'11px 15px',color:'var(--C)',fontFamily:'Jost,sans-serif',fontSize:'14px',outline:'none',width:'100%'};
+
+  const renderCardContent = (b) => (
+    <TiltCard className="gc" style={{padding:'2rem',position:'relative',overflow:'hidden',height:'100%',width:'100%'}} strength={3}>
+      <div className="serif" style={{position:'absolute',top:8,right:16,fontSize:'5.5rem',color:'rgba(212,175,55,.07)',lineHeight:1,userSelect:'none'}}>"</div>
+      {b.side&&<div style={{position:'absolute',top:'14px',left:'14px',fontSize:'.6rem',letterSpacing:'3px',color:b.side==='bride'?'#FF9EBC':'#C084FC',opacity:.7,textTransform:'uppercase'}}>{b.side==='bride'?"Bride's Side":`Groom's Side`}</div>}
+      <p style={{fontSize:'.95rem',lineHeight:1.95,color:'rgba(253,248,236,.75)',marginBottom:'1.5rem',fontStyle:'italic',position:'relative',zIndex:1,marginTop:b.side?'1.5rem':0}}>{b.msg}</p>
+      <div style={{display:'flex',alignItems:'center',gap:'.8rem'}}>
+        <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,var(--G),#7A5B10)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+          <span className="serif" style={{fontSize: '1.1rem', color: '#FBF5E8', fontWeight: 300}}>{b.a||(b.name||'?')[0]}</span>
+        </div>
+        <div><p style={{fontSize:'.9rem',color:'var(--C)',fontWeight:500}}>{b.name}</p><p style={{fontSize:'.7rem',color:'var(--G)',letterSpacing:'1px',opacity:.8}}>{b.rel}</p></div>
+      </div>
+      {b.token && myTokens.includes(b.token) && (
+        <button 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            handleDeleteCard(b.token);
+          }} 
+          style={{
+            position:'absolute',
+            bottom:'14px',
+            right:'14px',
+            background:'rgba(220,50,50,.18)',
+            border:'1px solid rgba(220,50,50,.45)',
+            color:'#ffb3b3',
+            borderRadius:'30px',
+            padding:'8px 18px',
+            display:'flex',
+            alignItems:'center',
+            gap:'8px',
+            cursor:'pointer',
+            fontFamily:'Jost, sans-serif',
+            letterSpacing:'1px',
+            zIndex:10,
+            transition:'all .2s'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background='rgba(220,50,50,.35)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background='rgba(220,50,50,.18)'; }}
+          title="Delete your blessing"
+        >
+          <span style={{fontSize:'1.1rem'}}>🗑️</span>
+          <span style={{fontWeight:600, textTransform:'uppercase', fontSize:'.85rem'}}>Delete</span>
+        </button>
+      )}
+    </TiltCard>
+  );
+
   return (
     <section id="blessings" className="section" style={{background:'rgba(212,175,55,.013)'}}>
-      <div style={{width:'100%',maxWidth:1100,zIndex:1,position:'relative'}}>
-        <div style={{textAlign:'center',marginBottom:'4rem'}}><Eye>Words of Love</Eye><SecHead sub="Heartfelt messages from the people who love Aqsa & Huzaifa the most.">Blessings Wall</SecHead></div>
-        <div className="bless-grid" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.1rem'}}>
-          {W.blessings.map((b,i)=>(
-            <motion.div key={b.name} initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.6,delay:i*.07}}>
-              <TiltCard className="gc" style={{padding:'1.6rem',position:'relative',overflow:'hidden',height:'100%'}} strength={5}>
-                <div className="serif" style={{position:'absolute',top:8,right:16,fontSize:'5rem',color:'rgba(212,175,55,.07)',lineHeight:1,userSelect:'none'}}>"</div>
-                <p style={{fontSize:'.87rem',lineHeight:1.95,color:'rgba(253,248,236,.72)',marginBottom:'1.3rem',fontStyle:'italic',position:'relative',zIndex:1}}>{b.msg}</p>
-                <div style={{display:'flex',alignItems:'center',gap:'.7rem'}}>
-                  <div style={{width:38,height:38,borderRadius:'50%',background:'linear-gradient(135deg,var(--G),#7A5B10)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                    <span className="serif" style={{fontSize:'1rem',color:'#FBF5E8',fontWeight:300}}>{b.a}</span>
-                  </div>
-                  <div><p style={{fontSize:'.85rem',color:'var(--C)',fontWeight:500}}>{b.name}</p><p style={{fontSize:'.68rem',color:'var(--G)',letterSpacing:'1px',opacity:.8}}>{b.rel}</p></div>
-                </div>
-              </TiltCard>
-            </motion.div>
-          ))}
+      <div style={{width:'100%',maxWidth:800,zIndex:1,position:'relative'}}>
+        <div style={{textAlign:'center',marginBottom:'1.5rem'}}><Eye>Words of Love</Eye><SecHead sub="Heartfelt messages from the people who love Aqsa & Huzaifa the most.">Blessings Wall</SecHead></div>
+
+        {/* Auto Slide Pause Toggle */}
+        <div style={{textAlign:'center',marginBottom:'2.5rem'}}>
+          <button 
+            onClick={()=>setIsAutoPlay(p=>!p)} 
+            style={{
+              padding:'10px 22px',
+              borderRadius:'25px',
+              border:'1px solid var(--GB)',
+              background:'rgba(212,175,55,.07)',
+              color:'var(--G)',
+              fontFamily:'Jost,sans-serif',
+              fontSize:'.72rem',
+              letterSpacing:'2px',
+              textTransform:'uppercase',
+              cursor:'pointer',
+              transition:'all .3s'
+            }}
+            onMouseEnter={(e) => { e.target.style.background='rgba(212,175,55,.15)'; }}
+            onMouseLeave={(e) => { e.target.style.background='rgba(212,175,55,.07)'; }}
+          >
+            {isAutoPlay ? '✦ Pause & Browse Blessings ✦' : '✦ Resume Auto Slide ✦'}
+          </button>
         </div>
+
+        {/* Approve/reject feedback message */}
+        {approveMsg&&(
+          <motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}}
+            style={{textAlign:'center',marginBottom:'2rem',padding:'14px 20px',borderRadius:12,background:'rgba(212,175,55,.08)',border:'1px solid rgba(212,175,55,.35)',color:'var(--G)',fontSize:'.88rem',maxWidth:600,margin:'0 auto 2rem'}}>
+            {approveMsg}
+          </motion.div>
+        )}
+
+        {loadingBless ? (
+          <p style={{textAlign:'center',color:'rgba(253,248,236,.4)',letterSpacing:'2px',fontSize:'.8rem'}}>Loading blessings...</p>
+        ) : isAutoPlay ? (
+          <div className="marquee-container">
+            <div className="marquee-vert">
+              {marqueeList.map((b,i)=>(
+                <div key={b.id ? `${b.id}-${i}` : `${b.name}-${i}`} style={{width:'100%', padding:'0 10px'}}>
+                  {renderCardContent(b)}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{maxHeight:'650px', overflowY:'auto', padding:'10px 0'}} className="custom-scroll">
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:'1.2rem'}}>
+              {allBlessings.map((b)=>(
+                <div key={b.id || b.name} style={{width:'100%'}}>
+                  {renderCardContent(b)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Delete Your Blessing Section */}
+        <div style={{marginTop:'4rem',padding:'1.5rem',borderRadius:16,border:'1px solid rgba(212,175,55,.15)',background:'rgba(212,175,55,.04)'}}>
+          <p style={{fontSize:'.7rem',letterSpacing:'3px',color:'var(--G)',marginBottom:'1rem',textTransform:'uppercase'}}>🗑 Remove Your Blessing</p>
+          <p style={{fontSize:'.8rem',color:'rgba(253,248,236,.45)',marginBottom:'1.2rem',lineHeight:1.7}}>Apni blessing delete karne ke liye card par bane 🗑 icon par click karein. Agar kisi doosri device par hain, toh niche apni **Email** likh kar delete kar sakte hain.</p>
+          <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',alignItems:'center'}}>
+            <input style={{...IS2,maxWidth:320}} placeholder="Enter your submitted Email" type="email" value={deleteEmail} onChange={e=>setDeleteEmail(e.target.value)}/>
+            <button onClick={handleDeleteByEmail} style={{padding:'12px 24px',borderRadius:12,background:'rgba(220,50,50,.1)',border:'1px solid rgba(220,50,50,.25)',color:'#ff8080',fontFamily:'Jost,sans-serif',fontSize:'.8rem',cursor:'pointer',whiteSpace:'nowrap'}}>Delete Blessing</button>
+          </div>
+          {delStatus&&<p style={{fontSize:'.75rem',color:'var(--G)',opacity:.9,marginTop:'1rem'}}>{delStatus}</p>}
+        </div>
+
       </div>
     </section>
   );
@@ -1133,24 +1502,43 @@ function Footer(){
 }
 
 // ══════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════════════
 // 🎵  MUSIC BUTTON
 // ══════════════════════════════════════════════════════════════════════════
 function MusicBtn({show}){
   const[playing,setPlaying]=useState(false);
   const audio=useRef(null);
+  
   useEffect(()=>{
-    audio.current=new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
-    audio.current.loop=true;
-    return()=>{try{audio.current.pause();}catch(_){}};
+    audio.current = new Audio('/HUGELxSOLTO-Jamaican(Bam Bam)(SammyFlashAfroHouseRemix).mp3');
+    audio.current.loop = true;
+    
+    return()=>{
+      try { audio.current.pause(); } catch(e){}
+    };
   },[]);
-  const toggle=()=>{playing?audio.current.pause():audio.current.play().catch(()=>{});setPlaying(p=>!p);};
+
+  const toggle = () => {
+    if(playing){
+      audio.current.pause();
+      setPlaying(false);
+    } else {
+      audio.current.play().then(() => {
+        setPlaying(true);
+      }).catch((e) => {
+        console.error("Play failed:", e);
+        setPlaying(false);
+      });
+    }
+  };
+
   return (
     <AnimatePresence>
       {show&&(
         <motion.button initial={{opacity:0,scale:.5}} animate={{opacity:1,scale:1}} exit={{opacity:0}} transition={{delay:1.5}}
           onClick={toggle}
           style={{position:'fixed',bottom:`calc(var(--BNH) + var(--SAB) + 1rem)`,right:'1.2rem',zIndex:800,width:48,height:48,borderRadius:'50%',background:'rgba(212,175,55,.13)',border:'1px solid rgba(212,175,55,.35)',color:'var(--G)',fontSize:'1.1rem',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(12px)',boxShadow:playing?'0 0 22px rgba(212,175,55,.4)':'none',transition:'box-shadow .3s'}}>
-          {playing?'⏸':'🎵'}
+          {playing ? '⏸' : '🎵'}
         </motion.button>
       )}
     </AnimatePresence>
@@ -1162,6 +1550,13 @@ function MusicBtn({show}){
 // ══════════════════════════════════════════════════════════════════════════
 export default function App(){
   const[opened,setOpened]=useState(false);
+  const [myTokens, setMyTokens] = useState([]);
+
+  useEffect(() => {
+    const tokens = JSON.parse(localStorage.getItem('my_blessings') || '[]');
+    setMyTokens(tokens);
+  }, []);
+
   return (
     <>
       <style>{CSS}</style>
@@ -1182,8 +1577,8 @@ export default function App(){
             <Events/>
             <LocationMap/>
             <Gallery/>
-            <RSVP/>
-            <Blessings/>
+            <RSVP myTokens={myTokens} setMyTokens={setMyTokens}/>
+            <Blessings myTokens={myTokens} setMyTokens={setMyTokens}/>
             <Footer/>
           </motion.div>
         )}

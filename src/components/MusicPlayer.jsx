@@ -6,8 +6,7 @@ export default function MusicPlayer() {
   const audioRef = useRef(null);
 
   useEffect(() => {
-    // You can replace this URL with the actual wedding music track
-    audioRef.current = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    audioRef.current = new Audio(encodeURI('/HUGEL x SOLTO - Jamaican (Bam Bam) (Sammy Flash Afro House Remix).mp3'));
     audioRef.current.loop = true;
   }, []);
 
