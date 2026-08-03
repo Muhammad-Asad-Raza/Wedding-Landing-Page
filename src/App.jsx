@@ -14,7 +14,7 @@ const W = {
   valima: new Date('2026-12-21T19:30:00'),
   hashtag:'#Aqsfa❤️Forever',
   events:[
-    { id:1,icon:'🌼',accent:'#FF9EBC',name:'Mayoon + Nikah', day:'Monday',   date:'December 14, 2026',time:'Nikah 04:00 PM — 05:30 PM · Mayoon 08:00 PM — Late Night',venue:'Nikah at Jama Masjid Siddiqui · Mayoon at Home ',city:'Karachi',dress:'Traditional / Elegant',desc:'Mayoon at home and nikah at Jama Masjid Siddiqui — one beautiful day, one special story.' },
+    { id:1,icon:'🌼',accent:'#FF9EBC',name:'Mayoon + Nikah', day:'Monday',   date:'December 14, 2026',time:'Nikah 04:00 PM — 05:30 PM · Mayoon 08:00 PM — Late Night',venue:'Nikah at Siddiqui Masjid  · Mayoon at Home ',city:'Karachi',dress:'Traditional / Elegant',desc:'Mayoon at home and nikah at Siddiqui Masjid — one beautiful day, one special story.' },
     { id:2,icon:'💒',accent:'#C084FC',name:'Wedding Celebration',day:'Thursday',date:'December 17, 2026',time:'07:00 PM — Late Night',venue:'Zam Zam Marquee',city:'Karachi',dress:'Formal / Sherwani',  desc:'A beautiful wedding celebration at Zam Zam Marquee with family and friends.' },
     { id:3,icon:'✨',accent:'#E8B842',name:'Valima Reception',day:'Monday',   date:'December 21, 2026',time:'07:30 PM — Late Night',venue:'Mubeen Banquet',city:'Karachi',dress:'Formal / Elegant',     desc:'A grand valima reception at Mubeen Banquet welcoming all guests.' },
   ],
@@ -86,7 +86,7 @@ const W = {
   { 
     a: 'C', 
     name: 'Cousins', 
-    rel: 'Cousins of the Groom', 
+    rel: 'Cousins of the Bride', 
     msg: 'Huzaifa, you have chosen wisely! Aqsa is a gem, and together you will build something beautiful. Congratulations! 🎊' 
   },
 ],
@@ -158,7 +158,7 @@ body{
 .reveal-card .shine-bar{position:absolute;top:0;left:-120%;width:160%;height:24%;background:linear-gradient(120deg,rgba(255,255,255,0),rgba(255,255,255,.35),rgba(255,255,255,0));transform:skewX(-18deg);animation:shineGlow 2.2s ease-in-out infinite;pointer-events:none;}
 .reveal-card .heart-mark{position:absolute;top:12px;right:12px;width:60px;height:58px;background:radial-gradient(circle at 35% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7)),radial-gradient(circle at 65% 35%,rgba(212,175,55,.95),rgba(212,175,55,.7));border-radius:50% 50% 50% 50%;transform:rotate(45deg);box-shadow:0 0 18px rgba(212,175,55,.18);}
 .reveal-card .heart-mark:after{content:'';position:absolute;top:12px;left:12px;width:20px;height:20px;background:rgba(255,255,255,.85);border-radius:50%;}
-.scratch-wrapper{position:relative;overflow:hidden;border-radius:26px;margin:-1.2rem auto 1rem;width:calc(100% - 2.4rem);height:220px;touch-action:none;box-shadow:0 12px 40px rgba(0,0,0,.2);}
+.scratch-wrapper{position:relative;overflow:hidden;border-radius:26px;margin:-1.2rem auto 1rem;width:100%;max-width:100%;box-sizing:border-box;min-height:240px;height:auto;touch-action:none;box-shadow:0 12px 40px rgba(0,0,0,.2);}
 .scratch-wrapper.revealed{touch-action:auto;}
 .scratch-wrapper.revealed .scratch-canvas{opacity:0;pointer-events:none;}
 .scratch-wrapper.revealed .scratch-prompt{opacity:0;visibility:hidden;}
@@ -167,7 +167,7 @@ body{
 .scratch-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair;touch-action:none;z-index:4}
 .scratch-prompt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:1rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.95);z-index:5;pointer-events:none;}
 .scratch-heart{position:absolute;top:50%;left:50%;width:140px;height:130px;transform:translate(-50%,-50%) rotate(45deg);background:linear-gradient(135deg,rgba(212,175,55,.6),rgba(255,158,188,.65));border-radius:50% 50% 0 0;box-shadow:0 0 25px rgba(212,175,55,.28), inset 0 0 35px rgba(255,255,255,.15);border:1px solid rgba(212,175,55,.35);pointer-events:none;transition:transform .9s cubic-bezier(.2,.9,.28,1),opacity .6s ease;}
-.scratch-content{position:relative;z-index:2;padding:28px 22px 12px;opacity:0;transform:translateY(8px) scale(.995);transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+.scratch-content{position:relative;z-index:2;padding:30px 20px 18px;opacity:0;transform:translateY(8px) scale(.995);transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1)}
 
 @keyframes popHeart{0%{transform:translate(-50%,-50%) rotate(45deg) scale(.6);opacity:0}45%{transform:translate(-50%,-50%) rotate(45deg) scale(1.06);opacity:1}70%{transform:translate(-50%,-50%) rotate(45deg) scale(.98)}100%{transform:translate(-50%,-50%) rotate(45deg) scale(1);opacity:1}}
 .scratch-wrapper.revealed .scratch-heart{animation:popHeart .9s cubic-bezier(.2,.9,.28,1) forwards}
@@ -1103,10 +1103,10 @@ function Hero(){
             <div className="scratch-heart" aria-hidden="true" />
             {!revealed && <div className="scratch-prompt">Scratch to reveal</div>}
             <div className="scratch-content">
-              <p style={{fontFamily:'Jost',letterSpacing:'4px',fontSize:'.72rem',textTransform:'uppercase',color:'rgba(255,245,225,.65)',marginBottom:'1rem'}}>Save The Date</p>
-              <h3 className="serif" style={{fontSize:'2.35rem',lineHeight:1.05,color:'#FDF8EC',margin:'0 0 .6rem',fontWeight:300}}>December 17, 2026</h3>
-              <p style={{fontFamily:'Jost',fontSize:'.92rem',letterSpacing:'1.2px',color:'rgba(253,248,236,.76)',margin:'0 0 .65rem'}}>Aqsa & Huzaifa are getting married</p>
-              <p style={{fontFamily:'Jost',fontSize:'.72rem',lineHeight:1.7,color:'rgba(253,248,236,.54)',margin:'0'}}>
+              <p style={{fontFamily:'Jost',letterSpacing:'4px',fontSize:'clamp(.62rem,.9vw,.72rem)',textTransform:'uppercase',color:'rgba(255,245,225,.65)',marginBottom:'1rem'}}>Save The Date</p>
+              <h3 className="serif" style={{fontSize:'clamp(1.7rem,7vw,2.35rem)',lineHeight:1.05,color:'#FDF8EC',margin:'0 0 .6rem',fontWeight:300}}>December 17, 2026</h3>
+              <p style={{fontFamily:'Jost',fontSize:'clamp(.75rem,2vw,.92rem)',letterSpacing:'1.2px',color:'rgba(253,248,236,.76)',margin:'0 0 .65rem'}}>Aqsa & Huzaifa are getting married</p>
+              <p style={{fontFamily:'Jost',fontSize:'clamp(.63rem,1.8vw,.72rem)',lineHeight:1.7,color:'rgba(253,248,236,.54)',margin:'0'}}>
                 Monday 14th Mayoon & Nikah, Thursday 17th Wedding, Monday 21st Valima.
               </p>
             </div>
