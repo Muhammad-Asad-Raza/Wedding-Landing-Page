@@ -81,7 +81,7 @@ const W = {
     a: 'P', 
     name: 'Phuppo', 
     rel: 'Paternal Aunt', 
-    msg: 'Mere bachon, Allah tumhare ghar ko jannat ka ek tukra bana de. Yeh aankhein aaj bahut khush hain. Tumhein mera pyara sa ashirwad aur pyar mubarak ho.' 
+    msg: 'Mere pyare bachon, Allah tumhare ghar ko rehmat aur jannat ka tukda bana de. Aaj meri aankhein aur dil dono bohot khush hain. Tumhein Phuppo ki taraf se dher sara pyar aur hamesha khush rehne ki dua mubarak ho! 💕' 
   },
   { 
     a: 'C', 
@@ -332,6 +332,130 @@ option{background:#1D1008;color:#FDF8EC}
   .cd-num{font-size:1.6rem!important}
 }
 `;
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🦋  ENVELOPE BUTTERFLIES
+// ══════════════════════════════════════════════════════════════════════════
+const BUTTERFLY_DATA = [
+  { id:1, left:'15%',  top:'20%', size:48, color:'#D4AF37', color2:'#F0D060', flapDur:0.25, pathX:[0, 40, 90, 30, 0], pathY:[0, -60, -20, 30, 0], dur:6 },
+  { id:2, left:'75%',  top:'15%', size:54, color:'#C084FC', color2:'#E9D5FF', flapDur:0.28, pathX:[0, -50, -90, -40, 0], pathY:[0, -40, 20, -30, 0], dur:7 },
+  { id:3, left:'65%',  top:'70%', size:50, color:'#FF9EBC', color2:'#FFCCE0', flapDur:0.22, pathX:[0, 30, -30, 40, 0], pathY:[0, 50, 90, 40, 0], dur:8 },
+  { id:4, left:'8%',   top:'60%', size:45, color:'#E8CC6A', color2:'#FFF5CC', flapDur:0.26, pathX:[0, 60, 20, -40, 0], pathY:[0, -50, -80, -30, 0], dur:7.5 },
+  { id:5, left:'32%',  top:'12%', size:26, color:'#FF9EBC', color2:'#FFD6E5', flapDur:0.18, pathX:[0, -30, 20, -20, 0], pathY:[0, 40, -30, 20, 0], dur:5 },
+  { id:6, left:'82%',  top:'48%', size:22, color:'#D4AF37', color2:'#FFF0AA', flapDur:0.16, pathX:[0, 40, -10, 30, 0], pathY:[0, -30, 40, -20, 0], dur:5.5 },
+  { id:7, left:'48%',  top:'78%', size:20, color:'#C084FC', color2:'#E9D5FF', flapDur:0.20, pathX:[0, -20, 30, -30, 0], pathY:[0, 40, 60, 20, 0], dur:6.5 },
+  { id:8, left:'22%',  top:'50%', size:24, color:'#E8CC6A', color2:'#FFF5CC', flapDur:0.19, pathX:[0, 30, 60, 20, 0], pathY:[0, -40, -20, 30, 0], dur:5.8 },
+];
+
+function EnvelopeButterflies({ visible, clicked }) {
+  const [timeUp, setTimeUp] = useState(false);
+
+  useEffect(() => {
+    // 1-minute timer to stop showing butterflies and save performance
+    const timer = setTimeout(() => {
+      setTimeUp(true);
+    }, 60000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:8998,pointerEvents:'none',overflow:'hidden'}}>
+      {BUTTERFLY_DATA.map(b => {
+        const s = b.size;
+        const wingW = s * 0.85;
+        const wingH = s * 0.7;
+        const bodyH = s * 0.8;
+
+        // Custom fly away targets when envelope is clicked
+        const angle = Math.random() * Math.PI * 2;
+        const flyAwayX = Math.cos(angle) * window.innerWidth * 0.8;
+        const flyAwayY = Math.sin(angle) * window.innerHeight * 0.8;
+
+        return (
+          <motion.div
+            key={b.id}
+            initial={{ left: b.left, top: b.top, scale: 1, x: 0, y: 0, rotate: 0, opacity: 1 }}
+            animate={clicked ? {
+              x: flyAwayX,
+              y: flyAwayY,
+              scale: 0,
+              rotate: angle * (180 / Math.PI),
+              opacity: 0
+            } : timeUp ? {
+              opacity: 0,
+              scale: 0,
+              y: -150
+            } : {
+              x: b.pathX,
+              y: b.pathY,
+              rotate: [0, 5, -5, 3, 0],
+              opacity: 1,
+              scale: 1
+            }}
+            transition={clicked ? {
+              duration: 1.2,
+              ease: [0.25, 1, 0.5, 1]
+            } : timeUp ? {
+              duration: 2.5,
+              ease: "easeInOut"
+            } : {
+              x: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
+              y: { duration: b.dur, repeat: Infinity, ease: "easeInOut" },
+              rotate: { duration: b.dur, repeat: Infinity, ease: "easeInOut" }
+            }}
+            style={{
+              position:'absolute',
+              display:'flex',
+              alignItems:'center',
+              justifyContent:'center',
+            }}
+          >
+            {/* Left Wing */}
+            <motion.div
+              animate={{ scaleX: [1, 0.2, 1] }}
+              transition={{ duration: b.flapDur, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                width: wingW,
+                height: wingH,
+                background: `radial-gradient(ellipse at 70% 40%, ${b.color2}, ${b.color}99)`,
+                borderRadius: '80% 20% 60% 40%',
+                transformOrigin: 'right center',
+                filter: 'drop-shadow(0 2px 5px rgba(0,0,0,.15))',
+                border: `1px solid ${b.color}77`,
+              }}
+            />
+            {/* Body */}
+            <div style={{
+              width: s * 0.12,
+              height: bodyH,
+              background: `linear-gradient(to bottom, ${b.color}, #3d2500)`,
+              borderRadius: '50%',
+              zIndex: 2,
+              boxShadow: `0 0 5px ${b.color}88`,
+              flexShrink: 0,
+            }}/>
+            {/* Right Wing */}
+            <motion.div
+              animate={{ scaleX: [1, 0.2, 1] }}
+              transition={{ duration: b.flapDur, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                width: wingW,
+                height: wingH,
+                background: `radial-gradient(ellipse at 30% 40%, ${b.color2}, ${b.color}99)`,
+                borderRadius: '20% 80% 40% 60%',
+                transformOrigin: 'left center',
+                filter: 'drop-shadow(0 2px 5px rgba(0,0,0,.15))',
+                border: `1px solid ${b.color}77`,
+              }}
+            />
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
 
 // ══════════════════════════════════════════════════════════════════════════
 // 🌌  3D SCENE  (reduced on mobile for perf)
@@ -765,6 +889,9 @@ function Envelope({onOpen}){
   const half={position:'fixed',top:0,height:'100vh',width:'50%',zIndex:9000,cursor:clicked?'default':'pointer'};
   return (
     <>
+      {/* Animated butterflies on envelope screen */}
+      <EnvelopeButterflies visible={!gone} clicked={clicked}/>
+
       <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:.8}}>
         <div className={`env-linen ${clicked?'env-l':''}`} style={{...half,left:0}} onClick={open}>
           <div style={{position:'absolute',inset:20,border:'1px solid rgba(212,175,55,.3)',borderRight:'none',borderRadius:'4px 0 0 4px'}}/>
@@ -1505,25 +1632,23 @@ function Footer(){
 // ══════════════════════════════════════════════════════════════════════════
 // 🎵  MUSIC BUTTON
 // ══════════════════════════════════════════════════════════════════════════
-function MusicBtn({show}){
-  const[playing,setPlaying]=useState(false);
-  const audio=useRef(null);
-  
+function MusicBtn({show, audioRef}){
+  const[playing,setPlaying]=useState(true);
+
+  // Auto-play as soon as this component mounts (envelope was clicked = user gesture done)
   useEffect(()=>{
-    audio.current = new Audio('/HUGELxSOLTO-Jamaican(Bam Bam)(SammyFlashAfroHouseRemix).mp3');
-    audio.current.loop = true;
-    
-    return()=>{
-      try { audio.current.pause(); } catch(e){}
-    };
+    if(!audioRef.current) return;
+    audioRef.current.play().then(()=>{
+      setPlaying(true);
+    }).catch(()=>{});
   },[]);
 
   const toggle = () => {
     if(playing){
-      audio.current.pause();
+      audioRef.current.pause();
       setPlaying(false);
     } else {
-      audio.current.play().then(() => {
+      audioRef.current.play().then(() => {
         setPlaying(true);
       }).catch((e) => {
         console.error("Play failed:", e);
@@ -1537,6 +1662,7 @@ function MusicBtn({show}){
       {show&&(
         <motion.button initial={{opacity:0,scale:.5}} animate={{opacity:1,scale:1}} exit={{opacity:0}} transition={{delay:1.5}}
           onClick={toggle}
+          title={playing ? 'Pause music' : 'Play music'}
           style={{position:'fixed',bottom:`calc(var(--BNH) + var(--SAB) + 1rem)`,right:'1.2rem',zIndex:800,width:48,height:48,borderRadius:'50%',background:'rgba(212,175,55,.13)',border:'1px solid rgba(212,175,55,.35)',color:'var(--G)',fontSize:'1.1rem',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(12px)',boxShadow:playing?'0 0 22px rgba(212,175,55,.4)':'none',transition:'box-shadow .3s'}}>
           {playing ? '⏸' : '🎵'}
         </motion.button>
@@ -1551,11 +1677,27 @@ function MusicBtn({show}){
 export default function App(){
   const[opened,setOpened]=useState(false);
   const [myTokens, setMyTokens] = useState([]);
+  // Single shared Audio instance created at top level
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const tokens = JSON.parse(localStorage.getItem('my_blessings') || '[]');
     setMyTokens(tokens);
+    // Create audio once
+    audioRef.current = new Audio('/AajSajeya.mp3');
+    audioRef.current.loop = true;
+    return () => {
+      try { audioRef.current.pause(); } catch(e){}
+    };
   }, []);
+
+  const handleOpen = () => {
+    setOpened(true);
+    // Envelope click = user gesture, so play immediately
+    if(audioRef.current){
+      audioRef.current.play().catch(()=>{});
+    }
+  };
 
   return (
     <>
@@ -1567,8 +1709,8 @@ export default function App(){
       {opened&&<ProgressBar/>}
       <SideNav show={opened}/>
       <BottomNav show={opened}/>
-      <Envelope onOpen={()=>setOpened(true)}/>
-      <MusicBtn show={opened}/>
+      <Envelope onOpen={handleOpen}/>
+      <MusicBtn show={opened} audioRef={audioRef}/>
       <AnimatePresence>
         {opened&&(
           <motion.div key="main" initial={{opacity:0}} animate={{opacity:1}} transition={{duration:1.3,delay:.4}}>
